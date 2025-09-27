@@ -53,4 +53,18 @@ const personSchema = mongoose.Schema(
 
 const Person = mongoose.model("Person", personSchema);
 
+// Pre-save hook to hash password
+personSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  const bcrypt = require('bcryptjs');
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+// Method to compare password
+personSchema.methods.comparePassword = async function(candidatePassword) {
+  const bcrypt = require('bcryptjs');
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
 module.exports = Person;

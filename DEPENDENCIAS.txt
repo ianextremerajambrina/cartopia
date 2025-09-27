@@ -1,0 +1,138 @@
+### Librerías para Autenticación y Validaciones
+
+En esta sección, te explico las librerías clave que he instalado para implementar autenticación (login, registro, protección de rutas) y validaciones (en middleware y modelos). Seré extenso y educativo, explicando qué hace cada una, por qué es útil, y cómo usarla. Incluyo ejemplos de código que puedes escribir o adaptar tú mismo para practicar. Estas librerías son estándar en aplicaciones Node.js/Express con MongoDB.
+
+**Nota:** He instalado todas estas librerías y las he integrado en el proyecto. Puedes ver los cambios en app.js, modelos, controladores y rutas.
+
+#### 1. **bcryptjs** (para hashing de contraseñas)
+   - **¿Qué es?** Una librería para "hashear" (encriptar) contraseñas de forma segura. Usa el algoritmo bcrypt, que es lento intencionalmente para resistir ataques de fuerza bruta.
+   - **¿Por qué?** Nunca almacenes contraseñas en texto plano. Si tu base de datos se compromete, las contraseñas estarán seguras.
+   - **Instalación:** `npm install bcryptjs`
+   - **Ejemplo básico (en Person model):**
+     ```javascript
+     const bcrypt = require('bcryptjs');
+
+     // Antes de guardar un usuario (en un pre-save hook de Mongoose)
+     personSchema.pre('save', async function(next) {
+       if (!this.isModified('password')) return next();
+       this.password = await bcrypt.hash(this.password, 12); // 12 es el "salt rounds" (más alto = más seguro pero lento)
+       next();
+     });
+
+     // Método para comparar contraseña (en login)
+     personSchema.methods.comparePassword = async function(candidatePassword) {
+       return await bcrypt.compare(candidatePassword, this.password);
+     };
+     ```
+     - **Prueba tú:** En un archivo separado, crea un script para hashear una contraseña y compararla. Ejemplo:
+       ```javascript
+       const bcrypt = require('bcryptjs');
+       async function test() {
+         const hashed = await bcrypt.hash('mypassword', 12);
+         console.log('Hashed:', hashed);
+         const match = await bcrypt.compare('mypassword', hashed);
+         console.log('Match:', match); // true
+       }
+       test();
+       ```
+
+#### 2. **jsonwebtoken** (para tokens JWT)
+   - **¿Qué es?** Librería para crear y verificar JSON Web Tokens (JWT). Un JWT es un token seguro que contiene datos (como ID de usuario y rol) y se envía en headers de requests.
+   - **¿Por qué?** Permite autenticación stateless: el cliente envía el token en cada request, y el servidor lo verifica sin necesidad de sesiones en DB.
+   - **Instalación:** `npm install jsonwebtoken`
+   - **Ejemplo básico (generar/verificar token):**
+     ```javascript
+     const jwt = require('jsonwebtoken');
+
+     // Generar token (en login)
+     const token = jwt.sign({ id: user._id, rol: user.rol }, process.env.JWT_SECRET, {
+       expiresIn: '7d' // Expira en 7 días
+     });
+
+     // Verificar token (en middleware)
+     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+     console.log(decoded); // { id: '...', rol: 'Cliente', iat: ..., exp: ... }
+     ```
+     - **Prueba tú:** Crea un script para generar un token y verificarlo.
+       ```javascript
+       const jwt = require('jsonwebtoken');
+       const secret = 'mysecret'; // Usa una variable de entorno en producción
+       const token = jwt.sign({ user: 'test' }, secret, { expiresIn: '1h' });
+       console.log('Token:', token);
+       const decoded = jwt.verify(token, secret);
+       console.log('Decoded:', decoded);
+       ```
+
+#### 3. **express-validator** (para validaciones en rutas/middleware)
+   - **¿Qué es?** Middleware para validar y sanitizar inputs en Express. Verifica tipos, longitudes, formatos (e.g., email válido), y maneja errores.
+   - **¿Por qué?** Previene datos maliciosos o inválidos antes de llegar a la DB. Mejor que validar manualmente en cada controlador.
+   - **Instalación:** `npm install express-validator`
+   - **Ejemplo básico (en una ruta):**
+     ```javascript
+     const { body, validationResult } = require('express-validator');
+
+     app.post('/persons', [
+       body('email').isEmail().normalizeEmail(),
+       body('password').isLength({ min: 6 }),
+       body('name').notEmpty().trim()
+     ], (req, res) => {
+       const errors = validationResult(req);
+       if (!errors.isEmpty()) {
+         return res.status(400).json({ errors: errors.array() });
+       }
+       // Procede con la lógica
+     });
+     ```
+     - **Prueba tú:** En una ruta simple, valida un email y password.
+       ```javascript
+       const express = require('express');
+       const { body, validationResult } = require('express-validator');
+       const app = express();
+       app.use(express.json());
+
+       app.post('/test', [
+         body('email').isEmail(),
+         body('age').isInt({ min: 18 })
+       ], (req, res) => {
+         const errors = validationResult(req);
+         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+         res.send('Valid!');
+       });
+
+       app.listen(3000);
+       // Prueba con Postman: POST /test con {"email": "invalid", "age": 15}
+       ```
+
+#### 4. **helmet** (seguridad básica en headers)
+   - **¿Qué es?** Middleware que configura headers HTTP seguros (e.g., previene clickjacking, XSS).
+   - **¿Por qué?** Protege contra ataques comunes sin esfuerzo.
+   - **Instalación:** `npm install helmet`
+   - **Ejemplo:** `app.use(helmet());` – Eso es todo, se aplica globalmente.
+
+#### 5. **cors** (Cross-Origin Resource Sharing)
+   - **¿Qué es?** Permite requests desde dominios diferentes (útil para frontend separado).
+   - **¿Por qué?** Por defecto, browsers bloquean requests cross-origin.
+   - **Instalación:** `npm install cors`
+   - **Ejemplo:** `app.use(cors({ origin: 'http://localhost:3000' }));`
+
+#### 6. **express-rate-limit** (rate limiting)
+   - **¿Qué es?** Limita el número de requests por IP en un tiempo dado.
+   - **¿Por qué?** Previene ataques DDoS o abuso de API.
+   - **Instalación:** `npm install express-rate-limit`
+   - **Ejemplo:**
+     ```javascript
+     const rateLimit = require('express-rate-limit');
+     const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }); // 100 requests por 15 min
+     app.use(limiter);
+     ```
+
+#### Notas Generales
+- **Instalación conjunta:** `npm install bcryptjs jsonwebtoken express-validator helmet cors express-rate-limit` (ya hecho).
+- **Variables de entorno:** He creado .env con JWT_SECRET y otras. Usa dotenv para secrets.
+- **Orden de middleware:** Aplicados globales (helmet, cors, rate-limit) antes de rutas en app.js.
+- **Práctica:** Empieza con bcrypt y jwt en un script separado para entenderlos. Luego integra en el proyecto.
+- **Implementación actual:** Autenticación completa con authController, middleware protect/restrictTo, y rutas protegidas en cars, persons, stores.
+
+Si tienes dudas o quieres que implemente algo específico, dime!</content>
+
+<parameter name="command">npm install bcryptjs jsonwebtoken express-validator helmet cors express-rate-limit

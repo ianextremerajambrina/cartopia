@@ -1,0 +1,39 @@
+### Próximos Pasos Obvios
+
+Basándome en el estado actual de tu aplicación (controladores, rutas y modelos básicos implementados, con tests pasando), aquí va un plan de los pasos lógicos a seguir.
+
+#### 1. **Añadir Más Rutas y Funcionalidades Específicas**
+   - **Rutas anidadas o específicas**: Por ejemplo, rutas para obtener coches de una tienda específica (e.g., `GET /stores/:storeId/cars`), alquileres de un cliente (e.g., `GET /persons/:personId/rentals`), o reseñas de un coche (e.g., `GET /cars/:carId/reviews`). Esto requiere middleware para validar permisos por rol (Cliente, Staff, Manager).
+   - **Rutas de búsqueda y filtrado avanzado**: Extender APIFeatures para búsquedas personalizadas, como filtrar coches por marca o estado.
+   - **Rutas de relaciones**: Endpoints para asociar/desasociar entidades, e.g., añadir un empleado a una tienda o actualizar el estado de un alquiler.
+
+#### 2. **Añadir Más Tests**
+   - **Tests de integración**: Probar rutas completas con supertest (ya tienes algunos, pero expande a todos los endpoints).
+   - **Tests de validación**: Asegurar que los modelos rechacen datos inválidos (e.g., email duplicado, fechas incorrectas).
+   - **Tests de autenticación/autorización**: Una vez implementado login, probar acceso restringido.
+   - **Cobertura**: Apunta al 80-90% con herramientas como istanbul o jest coverage.
+
+#### 3. **Añadir Validaciones y Seguridad**
+   - **Validaciones en modelos**: Usa mongoose validators para campos complejos (e.g., validar que fechaCompra sea posterior a fechaFabricacion).
+   - **Middleware de autenticación**: Implementa JWT o similar para proteger rutas. Roles: Cliente puede ver sus alquileres, Staff puede gestionar coches, Manager todo.
+   - **Validaciones en controladores**: Sanitizar inputs, manejar errores de forma consistente.
+   - **Seguridad básica**: Rate limiting, CORS, helmet para headers seguros.
+
+#### 4. **¿Puede tu amigo empezar el frontend?**
+   - **Sí, definitivamente**. Con los endpoints CRUD básicos ya funcionales (GET, POST, PATCH, DELETE para cada entidad), puede empezar a consumirlos. Recomienda usar herramientas como Axios o Fetch para llamadas API. Proporciona la documentación de endpoints (e.g., via Swagger o un README con ejemplos de requests/responses). Si añades autenticación pronto, coordina para que integre login/logout.
+
+#### 5. **Endpoints de Login**
+   - **Sí, crea un nuevo controlador**. Sugiero `authController.js` (en lugar de `loginController`, para ser más amplio: login, register, logout, etc.). Usará el modelo `Person` para autenticar.
+   - **Estructura básica**:
+     - **Login**: `POST /auth/login` – Recibe email/password, verifica contra Person, genera JWT con rol y ID.
+     - **Register**: `POST /auth/register` – Crea un nuevo Person (solo para Clientes inicialmente, o con rol por defecto).
+     - **Logout**: `POST /auth/logout` – Invalida token (si usas blacklist).
+     - **Middleware de protección**: Un middleware `protect` que verifica JWT y añade user al req (e.g., req.user = { id, rol }).
+   - **Implementación**: Instala `bcryptjs` para hashear passwords y `jsonwebtoken` para JWT. En Person model, añade métodos como `comparePassword`. No expongas passwords en responses.
+   - **Rutas**: Crea `authRoutes.js` y móntalo en `app.js` (e.g., `app.use('/api/auth', authRoutes)`).
+
+#### Orden Recomendado
+1. Implementa autenticación (authController, middleware).
+2. Añade validaciones y seguridad.
+3. Expande rutas y tests en paralelo.
+4. Coordina con frontend para integración.
