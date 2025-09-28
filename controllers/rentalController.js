@@ -29,7 +29,7 @@ exports.getAllRentals = async (req, res) => {
 
 exports.getRentalById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.rentalId;
     const rental = await Rental.findById(id);
 
     res.status(200).json({
@@ -68,7 +68,7 @@ exports.createRental = async (req, res) => {
 
 exports.updateRental = async (req, res) => {
   try {
-    const rentalId = req.params.id;
+    const rentalId = req.params.rentalId;
     const rentalData = await Rental.findByIdAndUpdate(rentalId, req.body, {
       new: true,
       runValidators: true,
@@ -91,7 +91,7 @@ exports.updateRental = async (req, res) => {
 
 exports.deleteRental = async (req, res) => {
   try {
-    const rentalId = req.params.id;
+    const rentalId = req.params.rentalId;
     const rental = await Rental.findByIdAndDelete(rentalId);
     res.status(204).json({
         status: 'success',

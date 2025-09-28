@@ -29,7 +29,7 @@ exports.getAllReviews = async (req, res) => {
 
 exports.getReviewById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.reviewId;
     const review = await Review.findById(id);
 
     res.status(200).json({
@@ -68,7 +68,7 @@ exports.createReview = async (req, res) => {
 
 exports.updateReview = async (req, res) => {
   try {
-    const reviewId = req.params.id;
+    const reviewId = req.params.reviewId;
     const reviewData = await Review.findByIdAndUpdate(reviewId, req.body, {
       new: true,
       runValidators: true,
@@ -91,7 +91,7 @@ exports.updateReview = async (req, res) => {
 
 exports.deleteReview = async (req, res) => {
   try {
-    const reviewId = req.params.id;
+    const reviewId = req.params.reviewId;
     const review = await Review.findByIdAndDelete(reviewId);
     res.status(204).json({
         status: 'success',

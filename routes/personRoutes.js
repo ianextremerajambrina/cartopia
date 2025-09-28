@@ -15,6 +15,6 @@ const router = express.Router();
  */
 
 router.route('/').get(protect, restrictTo('Manager'), getAllPersons).post(createPerson);
-router.route('/:id').get(protect, getPersonById).patch(protect, updatePerson).delete(protect, restrictTo('Manager'), deletePerson);
+router.route('/:personId').get(protect, getPersonById).patch(protect, updatePerson).delete(protect, restrictTo('Manager'), deletePerson);
 //router.route('/store/:id')
 module.exports = router;

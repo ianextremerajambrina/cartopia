@@ -29,7 +29,7 @@ exports.getAllPayments = async (req, res) => {
 
 exports.getPaymentById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.paymentId;
     const payment = await Payment.findById(id);
 
     res.status(200).json({
@@ -47,6 +47,8 @@ exports.getPaymentById = async (req, res) => {
   }
 };
 
+//TODO: Si tipoPago = alquiler verificamos que transaccionRef exista en Rental antes del pago, permitiendo múltiples pagos sin duplicar rentals
+// TODO: 'compra' -> 'Car', 'alquiler' -> 'Rental'. Si es una compra, ponemos transaccionTipo en 'Car', de lo contrario, 'Rental'
 exports.createPayment = async (req, res) => {
   try {
     const newPayment = await Payment.create(req.body);
@@ -68,7 +70,7 @@ exports.createPayment = async (req, res) => {
 
 exports.updatePayment = async (req, res) => {
   try {
-    const paymentId = req.params.id;
+    const paymentId = req.params.paymentId;
     const paymentData = await Payment.findByIdAndUpdate(paymentId, req.body, {
       new: true,
       runValidators: true,
@@ -91,7 +93,7 @@ exports.updatePayment = async (req, res) => {
 
 exports.deletePayment = async (req, res) => {
   try {
-    const paymentId = req.params.id;
+    const paymentId = req.params.paymentId;
     const payment = await Payment.findByIdAndDelete(paymentId);
     res.status(204).json({
         status: 'success',

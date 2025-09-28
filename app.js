@@ -8,6 +8,7 @@ const rentalRouter = require('./routes/rentalRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const serviceRouter = require('./routes/serviceRoutes');
 const storeRouter = require('./routes/storeRoutes');
+const authRouter = require('./routes/authRoutes');
 
 app.use(express.json());
 
@@ -23,5 +24,6 @@ app.use('/api/v1/rentals', rentalRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/services', serviceRouter);
 app.use('/api/v1/stores', storeRouter);
+app.use('/api/v1/', authRouter);
 
 module.exports = app;

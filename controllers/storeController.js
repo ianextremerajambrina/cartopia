@@ -29,7 +29,7 @@ exports.getAllStores = async (req, res) => {
 
 exports.getStoreById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.storeId;
     const store = await Store.findById(id);
 
     res.status(200).json({
@@ -68,7 +68,7 @@ exports.createStore = async (req, res) => {
 
 exports.updateStore = async (req, res) => {
   try {
-    const storeId = req.params.id;
+    const storeId = req.params.storeId;
     const storeData = await Store.findByIdAndUpdate(storeId, req.body, {
       new: true,
       runValidators: true,
@@ -91,7 +91,7 @@ exports.updateStore = async (req, res) => {
 
 exports.deleteStore = async (req, res) => {
   try {
-    const storeId = req.params.id;
+    const storeId = req.params.storeId;
     const store = await Store.findByIdAndDelete(storeId);
     res.status(204).json({
         status: 'success',

@@ -27,11 +27,37 @@ exports.getAllCars = async (req, res) => {
   }
 };
 
+exports.getAllCarsInStore = async (req, res) => {
+  try {
+    // TODO: Debe existir este parámetro en la ruta :storeId, que estará en req.query.params
+    const features = new APIFeatures(Car.find(), req.query) // TODO: Usaremos APIFeatures para filtrar por el storeId
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const cars = await features.query;
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cars,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudieron obtener los coches",
+    });
+  }
+};
+
 exports.getCarById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.carId;
     const car = await Car.findById(id);
-
+    console.log(req.params);
     res.status(200).json({
       status: "success",
       data: {
@@ -68,7 +94,7 @@ exports.createCar = async (req, res) => {
 
 exports.updateCar = async (req, res) => {
   try {
-    const carId = req.params.id;
+    const carId = req.params.carId;
     const carData = await Car.findByIdAndUpdate(carId, req.body, {
       new: true,
       runValidators: true,
@@ -91,7 +117,7 @@ exports.updateCar = async (req, res) => {
 
 exports.deleteCar = async (req, res) => {
   try {
-    const carId = req.params.id;
+    const carId = req.params.carId;
     const car = await Car.findByIdAndDelete(carId);
     res.status(204).json({
         status: 'success',

@@ -56,6 +56,7 @@ const carSchema = mongoose.Schema(
           required: [true, "El coche debe tener un precio de alquiler"],
         },
       },
+      _id: false
       //required: [true, 'Especifica el precio de venta y alquiler del coche']
     },
   },

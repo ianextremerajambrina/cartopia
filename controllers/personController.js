@@ -29,7 +29,7 @@ exports.getAllPersons = async (req, res) => {
 
 exports.getPersonById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.personId;
     const person = await Person.findById(id);
 
     res.status(200).json({
@@ -46,7 +46,7 @@ exports.getPersonById = async (req, res) => {
     });
   }
 };
-
+// TODO: Verificar que el rol no sea staff o manager. En caso contrario indicar error, y crear empleados en store
 exports.createPerson = async (req, res) => {
   try {
     const newPerson = await Person.create(req.body);
@@ -68,7 +68,7 @@ exports.createPerson = async (req, res) => {
 
 exports.updatePerson = async (req, res) => {
   try {
-    const personId = req.params.id;
+    const personId = req.params.personId;
     const personData = await Person.findByIdAndUpdate(personId, req.body, {
       new: true,
       runValidators: true,
@@ -91,7 +91,7 @@ exports.updatePerson = async (req, res) => {
 
 exports.deletePerson = async (req, res) => {
   try {
-    const personId = req.params.id;
+    const personId = req.params.personId;
     const person = await Person.findByIdAndDelete(personId);
     res.status(204).json({
         status: 'success',

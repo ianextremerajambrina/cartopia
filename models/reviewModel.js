@@ -22,12 +22,17 @@ const reviewSchema = mongoose.Schema(
       type: String,
       required: [true, "Actualmente no se permiten reseñas sin texto"],
     },
+    tienda: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Store",
+      required: [true, "No puede haber review sin tienda asociada"],
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const Review = mongoose.model('Review',reviewSchema);
+const Review = mongoose.model("Review", reviewSchema);
 
 module.exports = Review;

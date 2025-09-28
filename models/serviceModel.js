@@ -19,6 +19,11 @@ const serviceSchema = mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Car',
         required: [true, 'No puede haber servicio sin coche asociado']
+    },
+    tienda: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Store',
+        required: [true, 'No puede haber servicio sin tienda asociada']
     }
 },
 {
