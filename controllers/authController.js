@@ -54,7 +54,6 @@ exports.login = [
     try {
       const { email, password } = req.body;
       const user = await Person.findOne({ email }).select('+password');
-
       if (!user || !(await user.comparePassword(password))) {
         return res.status(401).json({ status: 'fail', message: 'Invalid email or password' });
       }
@@ -68,6 +67,7 @@ exports.login = [
       });
     } catch (err) {
       res.status(500).json({ status: 'fail', message: 'Server error' });
+      console.log(err);
     }
   },
 ];

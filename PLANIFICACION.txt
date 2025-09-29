@@ -37,3 +37,20 @@ Basándome en el estado actual de tu aplicación (controladores, rutas y modelos
 2. Añade validaciones y seguridad.
 3. Expande rutas y tests en paralelo.
 4. Coordina con frontend para integración.
+
+### Planificación para implementar métodos POST, PATCH, DELETE faltantes
+
+#### Métodos faltantes identificados:
+- carRoutes: POST en /owner/:ownerId
+- paymentRoutes: PATCH/DELETE en /client/:clientId
+- personRoutes: POST en /, /store/:storeId, /:personId/rentals, /:personId/cars
+- rentalRoutes: POST/PATCH/DELETE en /store/:storeId, /client/:clientId, /cars/:carId
+- reviewRoutes: POST/PATCH/DELETE en /client/:clientId, /cars/:carId; PATCH/DELETE en /:storeId/:reviewId
+- serviceRoutes: POST en /:storeId, /cars/:carId; PATCH/DELETE en /technician/:technicianId
+- storeRoutes: POST en /:storeId/cars, /:storeId/employees; PATCH/DELETE en /:storeId/cars/:carId
+
+#### Fases de implementación:
+1. **Controllers**: Agregar funciones nuevas (e.g., createCarByOwner, updatePaymentsByClient) con validación, auth y checks de existencia.
+2. **Routes**: Importar y agregar métodos (.post, .patch, .delete) con middleware.
+3. **Validación/Testing**: Usar express-validator, probar con Postman.
+4. **Limpieza**: Remover TODOs, unificar errores.

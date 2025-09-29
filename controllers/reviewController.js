@@ -47,6 +47,88 @@ exports.getReviewById = async (req, res) => {
   }
 };
 
+exports.getReviewsByCarId = async (req, res) => {
+  try {
+    const carId = req.params.carId;
+
+    const reviews = await Review.find({ coche: carId });
+
+    if (!reviews) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado reseñas para el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se han podido obtener las reseñas por el valor especificado",
+    });
+  }
+};
+exports.getReviewsByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+
+    const reviews = await Review.find({ cliente: clientId });
+
+    if (!reviews) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado reseñas para el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se han podido obtener las reseñas por el valor especificado",
+    });
+  }
+};
+exports.getReviewsByStoreId = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+
+    const reviews = await Review.find({ tienda: storeId });
+
+    if (!reviews) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado reseñas para el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se han podido obtener las reseñas por el valor especificado",
+    });
+  }
+};
+
 exports.createReview = async (req, res) => {
   try {
     const newReview = await Review.create(req.body);
@@ -94,9 +176,9 @@ exports.deleteReview = async (req, res) => {
     const reviewId = req.params.reviewId;
     const review = await Review.findByIdAndDelete(reviewId);
     res.status(204).json({
-        status: 'success',
-        data: null
-    })
+      status: "success",
+      data: null,
+    });
   } catch (e) {
     console.log(e);
     res.status(400).json({

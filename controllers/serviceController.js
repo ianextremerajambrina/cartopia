@@ -47,6 +47,99 @@ exports.getServiceById = async (req, res) => {
   }
 };
 
+// Funcion para /:storeId 
+exports.getServicesByStoreId = async (req, res) => {
+  try {
+
+    const storeId = req.params.storeId;
+
+    const services = await Service.find({tienda: storeId});
+
+    if (!services) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No se han encontrado servicios para esta tienda'
+      }
+      )
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        services
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: 'fail',
+      message: 'No se han podido obtener los servicios'
+    })
+  }
+}
+
+// Funcion para /cars/:carId
+exports.getServicesByCarId = async (req, res) => {
+  try {
+
+    const carId = req.params.carId
+
+    const services = await Service.find({vehiculo: carId});
+
+    if (!services) {
+      return res.status(404).json({
+      status: 'fail',
+      message: 'No se han encontrado servicios para el coche'
+      })
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        services
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: 'fail',
+      message: 'No se han podido obtener los servicios'
+    })
+  }
+}
+
+// Funcion para /technician/:technicianId
+exports.getServicesByTechnicianId = async (req, res) => {
+  try {
+    const technicianId = req.params.technicianId;
+
+    const services = await Service.find({tecnico: technicianId});
+
+    if (!services) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No se han encontrado servicios asignados al tecnico'
+      })
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        services
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: 'fail',
+      message: 'No se han podido obtener los servicios'
+    })
+  }
+}
+
 exports.createService = async (req, res) => {
   try {
     const newService = await Service.create(req.body);

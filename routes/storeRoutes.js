@@ -2,6 +2,9 @@ const express = require('express');
 const {
   getAllStores,
   getStoreById,
+  getCarFromStore,
+  getCarsFromStoreId,
+  getEmployeesFromStoreId,
   createStore,
   updateStore,
   deleteStore,
@@ -12,12 +15,7 @@ const router = express.Router();
 
 router.route('/').get(getAllStores).post(protect, restrictTo('Manager'), createStore);
 router.route('/:storeId').get(getStoreById).patch(protect, restrictTo('Manager'), updateStore).delete(protect, restrictTo('Manager'), deleteStore);
-// TODO: Crear funcion para :storeId/:carId
-//router.route('/:storeId/:carId')
-//TODO: Crear funcion para :storeId/cars
-//router.route('/:storeId/cars')
-// TODO: Crear funcion para :storeId/employees
-//router.route('/storeId/employees)
-// TODO: Crear funcion para :storeId/cars/:carId
-//router.route('/:storeId/cars/:carId)
+router.route('/:storeId/cars').get(getCarsFromStoreId) // TODO: Falta post para añadir coche a la tienda
+router.route('/:storeId/employees').get(protect, restrictTo('Manager'),getEmployeesFromStoreId); // TODO: Falta post para añadir un empleado
+router.route('/:storeId/cars/:carId').get(getCarFromStore) // TODO: Falta PATCH para modificar coche y DELETE para borrar
 module.exports = router;

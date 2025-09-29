@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const personSchema = mongoose.Schema(
   {
@@ -49,7 +50,7 @@ const personSchema = mongoose.Schema(
       },
     },
     tienda: {
-      // Si es empleado (manager o staff) al registrarse, asignar la tienda. 
+      // Si es empleado (manager o staff) al registrarse, asignar la tienda.
       // Si no, por defecto null (puede ser cliente, pero hasta que no se registre o compre, no se le asocia la tienda)
       type: mongoose.Schema.ObjectId,
       ref: "Store",
@@ -82,23 +83,22 @@ const personSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
+  {}
 );
-
-const Person = mongoose.model("Person", personSchema, "persons");
 
 // Pre-save hook to hash password
 personSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  const bcrypt = require("bcryptjs");
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-// Method to compare password
 personSchema.methods.comparePassword = async function (candidatePassword) {
-  const bcrypt = require("bcryptjs");
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+const Person = mongoose.model("Person", personSchema, "persons");
+
+// Method to compare password
 module.exports = Person;

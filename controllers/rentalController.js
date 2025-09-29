@@ -47,6 +47,91 @@ exports.getRentalById = async (req, res) => {
   }
 };
 
+exports.getRentalsByStoreId = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+
+    const rentals = await Rental.find({ tienda: storeId });
+
+    if (!rentals || rentals.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado alquileres por el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        rentals,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message:
+        "No se han podido obtener los alquileres por el valor especificado",
+    });
+  }
+};
+exports.getRentalsByCarId = async (req, res) => {
+  try {
+    const carId = req.params.carId;
+
+    const rentals = await Rental.find({ vehiculo: carId });
+
+    if (!rentals || rentals.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado alquileres por el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        rentals,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message:
+        "No se han podido obtener los alquileres por el valor especificado",
+    });
+  }
+};
+exports.getRentalsByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+
+    const rentals = await Rental.find({ cliente: clientId });
+
+    if (!rentals || rentals.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado alquileres por el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        rentals,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message:
+        "No se han podido obtener los alquileres por el valor especificado",
+    });
+  }
+};
+
 exports.createRental = async (req, res) => {
   try {
     const newRental = await Rental.create(req.body);
@@ -94,9 +179,9 @@ exports.deleteRental = async (req, res) => {
     const rentalId = req.params.rentalId;
     const rental = await Rental.findByIdAndDelete(rentalId);
     res.status(204).json({
-        status: 'success',
-        data: null
-    })
+      status: "success",
+      data: null,
+    });
   } catch (e) {
     console.log(e);
     res.status(400).json({

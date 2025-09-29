@@ -47,6 +47,35 @@ exports.getPaymentById = async (req, res) => {
   }
 };
 
+// Funcion para /client/:clientId
+exports.getPaymentsByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const clientPayments = await Payment.find({ cliente: clientId });
+
+    if (!clientPayments || clientPayments.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado datos",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        payments: clientPayments,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+
+    res.status(400).json({
+      status: "error",
+      message: "Error en la búsqueda de datos",
+    });
+  }
+};
+
 //TODO: Si tipoPago = alquiler verificamos que transaccionRef exista en Rental antes del pago, permitiendo múltiples pagos sin duplicar rentals
 // TODO: 'compra' -> 'Car', 'alquiler' -> 'Rental'. Si es una compra, ponemos transaccionTipo en 'Car', de lo contrario, 'Rental'
 exports.createPayment = async (req, res) => {
@@ -96,9 +125,9 @@ exports.deletePayment = async (req, res) => {
     const paymentId = req.params.paymentId;
     const payment = await Payment.findByIdAndDelete(paymentId);
     res.status(204).json({
-        status: 'success',
-        data: null
-    })
+      status: "success",
+      data: null,
+    });
   } catch (e) {
     console.log(e);
     res.status(400).json({
