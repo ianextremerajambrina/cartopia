@@ -76,6 +76,36 @@ exports.getPaymentsByClientId = async (req, res) => {
   }
 };
 
+// funcion para "/store/:rentalId"
+exports.getPaymentsByRentalId = async (req, res) => {
+  try {
+    const rentalId = req.params.rentalId;
+
+    const payments = await Payment.find({transaccionRef: rentalId});
+
+    if (!payments) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'No se encuentran pagos para esa referencia'
+      })
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        payments
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: 'fail',
+      message: 'No se ha podido realizar la busqueda de pagos para esa referencia'
+    })
+  }
+}
+
 //TODO: Si tipoPago = alquiler verificamos que transaccionRef exista en Rental antes del pago, permitiendo múltiples pagos sin duplicar rentals
 // TODO: 'compra' -> 'Car', 'alquiler' -> 'Rental'. Si es una compra, ponemos transaccionTipo en 'Car', de lo contrario, 'Rental'
 exports.createPayment = async (req, res) => {

@@ -219,3 +219,29 @@ exports.deleteStore = async (req, res) => {
     });
   }
 };
+
+exports.createCarInStore = async (req,res) => {
+   res.status(200).json({
+    status: 'success',
+    message: 'OK'
+   })
+}
+exports.updateCarFromStore = async (req,res) => {
+ res.status(200).json({
+  status: 'success',
+  message: 'OK'
+ })
+}
+exports.deleteCarFromStore = async (req,res) =>{
+ res.status(200).json({
+  status: 'success',
+  message: 'OK'
+ })
+}
+
+exports.createEmployeeInStore = async (req,res) => {
+ res.status(200).json({
+  status: 'success',
+  message: 'OK'
+ })
+}

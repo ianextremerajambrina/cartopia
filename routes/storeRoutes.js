@@ -5,6 +5,10 @@ const {
   getCarFromStore,
   getCarsFromStoreId,
   getEmployeesFromStoreId,
+  createCarInStore,
+  updateCarFromStore,
+  deleteCarFromStore,
+  createEmployeeInStore,
   createStore,
   updateStore,
   deleteStore,
@@ -13,9 +17,11 @@ const { protect, restrictTo } = require('../utils/auth');
 
 const router = express.Router();
 
+// TODO: Implementar POST,PATCH,DELETE en controlador
+
 router.route('/').get(getAllStores).post(protect, restrictTo('Manager'), createStore);
 router.route('/:storeId').get(getStoreById).patch(protect, restrictTo('Manager'), updateStore).delete(protect, restrictTo('Manager'), deleteStore);
-router.route('/:storeId/cars').get(getCarsFromStoreId) // TODO: Falta post para añadir coche a la tienda
-router.route('/:storeId/employees').get(protect, restrictTo('Manager'),getEmployeesFromStoreId); // TODO: Falta post para añadir un empleado
-router.route('/:storeId/cars/:carId').get(getCarFromStore) // TODO: Falta PATCH para modificar coche y DELETE para borrar
+router.route('/:storeId/cars').get(getCarsFromStoreId).post(createCarInStore);
+router.route('/:storeId/employees').get(protect, restrictTo('Manager'),getEmployeesFromStoreId).post(createEmployeeInStore);
+router.route('/:storeId/cars/:carId').get(getCarFromStore).patch(updateCarFromStore).delete(deleteCarFromStore);
 module.exports = router;

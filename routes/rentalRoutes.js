@@ -12,12 +12,11 @@ const {
 
 const router = express.Router();
 
+// TODO: Actualizar updateRental y deleteRental para que soporten los 3 campos de ID
+
 router.route('/').get(getAllRentals).post(createRental);
-router.route('/:rentalId').get(getRentalById).patch(updateRental).delete(deleteRental);
-// TODO: Crear funcion para /store/:storeId
-router.route('/store/:storeId').get(getRentalsByStoreId) // TODO: Más funciones?
-// TODO: Crear funcion para /client/:clientId
-router.route('/client/:clientId').get(getRentalsByClientId) // TODO: Más funciones?
-// TODO: Crear funcion para /cars/:carId
-router.route('/cars/:carId').get(getRentalsByCarId) // TODO: Más funciones?
+router.route('/:rentalId').get(getRentalById)
+router.route('/store/:storeId').get(getRentalsByStoreId).patch(updateRental).delete(deleteRental); 
+router.route('/client/:clientId').get(getRentalsByClientId).patch(updateRental).delete(deleteRental); 
+router.route('/cars/:carId').get(getRentalsByCarId).patch(updateRental).delete(deleteRental); 
 module.exports = router;

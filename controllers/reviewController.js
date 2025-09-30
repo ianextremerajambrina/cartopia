@@ -101,11 +101,40 @@ exports.getReviewsByClientId = async (req, res) => {
     });
   }
 };
+
 exports.getReviewsByStoreId = async (req, res) => {
   try {
     const storeId = req.params.storeId;
 
     const reviews = await Review.find({ tienda: storeId });
+
+    if (!reviews) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado reseñas para el valor especificado",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reviews,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se han podido obtener las reseñas por el valor especificado",
+    });
+  }
+};
+
+exports.getReviewByStoreId = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+
+    const reviews = await Review.findOne({ tienda: storeId });
 
     if (!reviews) {
       return res.status(404).json({
