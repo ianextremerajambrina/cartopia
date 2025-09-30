@@ -8,15 +8,17 @@ const {
   updatePerson,
   deletePerson,
   getPersonsByStoreId,
+  createPersonByStoreId,
+  createRentalByPersonId,
+  createCarByPersonId,
 } = require('../controllers/personController');
 const { protect, restrictTo } = require('../utils/auth');
 
 const router = express.Router();
 
-router.route('/').get(protect, restrictTo(['Manager']), getAllPersons);//.post(createPerson);
-router.route('/:personId').get(protect, restrictTo(['Manager', 'Staff']), getPersonById).patch(protect, updatePerson).delete(protect, restrictTo('Manager'), deletePerson);
-router.route('/store/:storeId').get(protect, restrictTo(['Manager','Staff']), getPersonsByStoreId) // TODO: Faltaría POST (??)
-router.route('/:personId/rentals').get(protect, restrictTo(['Manager','Staff']),getRentalsByPersonId) // TODO: Faltaría POST (??)
-// TODO: Funciones para esta ruta
-router.route('/:personId/cars').get(protect, restrictTo(['Manager','Staff']), getCarsByPersonId) // TODO: POST (??)
+router.route('/').get(getAllPersons).post(createPerson);
+router.route('/:personId').get(getPersonById).patch(updatePerson).delete(deletePerson);
+router.route('/store/:storeId').get(getPersonsByStoreId).post(createPersonByStoreId)
+router.route('/:personId/rentals').get(getRentalsByPersonId).post(createRentalByPersonId)
+router.route('/:personId/cars').get(getCarsByPersonId).post(createCarByPersonId)
 module.exports = router;

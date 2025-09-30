@@ -3,15 +3,17 @@ const {
   getAllPayments,
   getPaymentById,
   getPaymentsByClientId,
-  getPaymentsByRentalId,
+  getPaymentsByTransactionId,
   createPayment,
   updatePayment,
   deletePayment,
+  updatePaymentByClientId,
+  deletePaymentByClientId,
 } = require("../controllers/paymentController");
 
 const router = express.Router();
 
-// TODO: Crear GET para /store/:rentalId. Este metodo debe obtener los pagos del alquiler a partir del transactionRef, que equivale al rentalId presente en rentals
+// GET para /transaction/:transactionId. Este metodo debe obtener los pagos de la transacción a partir del transactionRef
 // TODO: Crear campo 'pagado' o similar en el que se registre el dinero que ha pagado un cliente -- RENTALS (???)
 // TODO P1: Verificar si PAYMENTS, si se compra un coche, se crea un RENTAL o no. 
 // TODO P1.2: No debe crearse registro en rental si el coche se paga al completo de una vez (?), considerándose la posibilidad de incluirlo en rentals si el pago es recurrente
@@ -22,7 +24,9 @@ router
   .get(getPaymentById)
   .patch(updatePayment)
   .delete(deletePayment);
-router.route("/store/:rentalId").get(getPaymentsByRentalId);
-router.route("/client/:clientId").get(getPaymentsByClientId); // TODO: Faltan DELETE y PATCH
+router.route("/transaction/:transactionId").get(getPaymentsByTransactionId);
+router.route("/client/:clientId").get(getPaymentsByClientId);
+// TODO: Falta get aqui
+router.route("/client/:clientId/:paymentId").patch(updatePaymentByClientId).delete(deletePaymentByClientId);
 
 module.exports = router;

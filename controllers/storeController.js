@@ -220,28 +220,138 @@ exports.deleteStore = async (req, res) => {
   }
 };
 
-exports.createCarInStore = async (req,res) => {
-   res.status(200).json({
-    status: 'success',
-    message: 'OK'
-   })
+exports.createCarInStore = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const carData = { ...req.body, propietario: storeId, propietarioTipo: 'Store' };
+
+    // Verificar que la tienda existe
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Tienda no encontrada'
+      });
+    }
+
+    const newCar = await Car.create(carData);
+
+    // Agregar el coche a la lista de vehiculos de la tienda
+    store.vehiculos.push(newCar._id);
+    await store.save();
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        car: newCar,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el coche",
+    });
+  }
 }
-exports.updateCarFromStore = async (req,res) => {
- res.status(200).json({
-  status: 'success',
-  message: 'OK'
- })
+exports.updateCarFromStore = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const carId = req.params.carId;
+
+    // Verificar que el coche pertenece a la tienda
+    const car = await Car.findOne({ _id: carId, propietario: storeId, propietarioTipo: 'Store' });
+    if (!car) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Coche no encontrado en esta tienda'
+      });
+    }
+
+    const carData = await Car.findByIdAndUpdate(carId, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        car: carData,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo actualizar el coche",
+    });
+  }
 }
-exports.deleteCarFromStore = async (req,res) =>{
- res.status(200).json({
-  status: 'success',
-  message: 'OK'
- })
+exports.deleteCarFromStore = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const carId = req.params.carId;
+
+    // Verificar que el coche pertenece a la tienda
+    const car = await Car.findOne({ _id: carId, propietario: storeId, propietarioTipo: 'Store' });
+    if (!car) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Coche no encontrado en esta tienda'
+      });
+    }
+
+    await Car.findByIdAndDelete(carId);
+
+    // Remover de la lista de vehiculos de la tienda
+    const store = await Store.findById(storeId);
+    store.vehiculos = store.vehiculos.filter(id => id.toString() !== carId);
+    await store.save();
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo eliminar el coche",
+    });
+  }
 }
 
-exports.createEmployeeInStore = async (req,res) => {
- res.status(200).json({
-  status: 'success',
-  message: 'OK'
- })
+exports.createEmployeeInStore = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const personData = { ...req.body, tienda: storeId, rol: req.body.rol || 'Staff' };
+
+    // Verificar que la tienda existe
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Tienda no encontrada'
+      });
+    }
+
+    const newPerson = await Person.create(personData);
+
+    // Agregar el empleado a la lista de empleados de la tienda
+    store.empleados.push(newPerson._id);
+    await store.save();
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        person: newPerson,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el empleado",
+    });
+  }
 }

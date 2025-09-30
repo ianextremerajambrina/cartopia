@@ -8,6 +8,15 @@ const {
   createRental,
   updateRental,
   deleteRental,
+  createRentalByStoreId,
+  updateRentalByStoreId,
+  deleteRentalByStoreId,
+  createRentalByClientId,
+  updateRentalByClientId,
+  deleteRentalByClientId,
+  createRentalByCarId,
+  updateRentalByCarId,
+  deleteRentalByCarId,
 } = require('../controllers/rentalController');
 
 const router = express.Router();
@@ -16,7 +25,10 @@ const router = express.Router();
 
 router.route('/').get(getAllRentals).post(createRental);
 router.route('/:rentalId').get(getRentalById)
-router.route('/store/:storeId').get(getRentalsByStoreId).patch(updateRental).delete(deleteRental); 
-router.route('/client/:clientId').get(getRentalsByClientId).patch(updateRental).delete(deleteRental); 
-router.route('/cars/:carId').get(getRentalsByCarId).patch(updateRental).delete(deleteRental); 
+router.route('/store/:storeId').get(getRentalsByStoreId).post(createRentalByStoreId);
+router.route('/store/:storeId/:rentalId').patch(updateRentalByStoreId).delete(deleteRentalByStoreId);
+router.route('/client/:clientId').get(getRentalsByClientId).post(createRentalByClientId);
+router.route('/client/:clientId/:rentalId').patch(updateRentalByClientId).delete(deleteRentalByClientId);
+router.route('/cars/:carId').get(getRentalsByCarId).post(createRentalByCarId);
+router.route('/cars/:carId/:rentalId').patch(updateRentalByCarId).delete(deleteRentalByCarId); 
 module.exports = router;

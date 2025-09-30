@@ -15,11 +15,11 @@ const paymentSchema = mongoose.Schema({
         type: Number,
         required: [true, 'especifica lo que cuesta el pago']
     },
-    transaccionTipo: { // 'compra' -> Car, 'alquiler' -> Rental
-        type: String,
-        enum: ['Rental', 'Car'],
-        required: [true, 'Tipo de transaccion requerido']
-    },
+     transaccionTipo: { // 'compra' -> Car, 'alquiler' -> Transaction
+         type: String,
+         enum: ['Transaction', 'Car'],
+         required: [true, 'Tipo de transaccion requerido']
+     },
     transaccionRef: {
       type: mongoose.Schema.ObjectId,
       // Usaremos un `refPath` para hacer la referencia dinámica

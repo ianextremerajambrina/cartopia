@@ -47,7 +47,7 @@ exports.getServiceById = async (req, res) => {
   }
 };
 
-// Funcion para /:storeId 
+// Funcion para /:storeId
 exports.getServicesByStoreId = async (req, res) => {
   try {
 
@@ -55,42 +55,10 @@ exports.getServicesByStoreId = async (req, res) => {
 
     const services = await Service.find({tienda: storeId});
 
-    if (!services) {
+    if (!services || services.length === 0) {
       return res.status(404).json({
         status: 'fail',
         message: 'No se han encontrado servicios para esta tienda'
-      }
-      )
-    }
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        services
-      }
-    })
-
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({
-      status: 'fail',
-      message: 'No se han podido obtener los servicios'
-    })
-  }
-}
-
-// Funcion para /cars/:carId
-exports.getServicesByCarId = async (req, res) => {
-  try {
-
-    const carId = req.params.carId
-
-    const services = await Service.find({vehiculo: carId});
-
-    if (!services) {
-      return res.status(404).json({
-      status: 'fail',
-      message: 'No se han encontrado servicios para el coche'
       })
     }
 
@@ -110,6 +78,103 @@ exports.getServicesByCarId = async (req, res) => {
   }
 }
 
+// Función para POST en /:storeId
+exports.createServiceByStoreId = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const serviceData = { ...req.body, tienda: storeId };
+
+    // Verificar que la tienda existe
+    const Store = require('../models/storeModel');
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Tienda no encontrada'
+      });
+    }
+
+    const newService = await Service.create(serviceData);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        service: newService,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el servicio",
+    });
+  }
+}
+
+// Funcion para /cars/:carId
+exports.getServicesByCarId = async (req, res) => {
+  try {
+
+    const carId = req.params.carId
+
+    const services = await Service.find({vehiculo: carId});
+
+    if (!services || services.length === 0) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No se han encontrado servicios para el coche'
+      })
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        services
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: 'fail',
+      message: 'No se han podido obtener los servicios'
+    })
+  }
+}
+
+// Función para POST en /cars/:carId
+exports.createServiceByCarId = async (req, res) => {
+  try {
+    const carId = req.params.carId;
+    const serviceData = { ...req.body, vehiculo: carId };
+
+    // Verificar que el coche existe
+    const Car = require('../models/carModel');
+    const car = await Car.findById(carId);
+    if (!car) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Coche no encontrado'
+      });
+    }
+
+    const newService = await Service.create(serviceData);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        service: newService,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el servicio",
+    });
+  }
+}
+
 // Funcion para /technician/:technicianId
 exports.getServicesByTechnicianId = async (req, res) => {
   try {
@@ -117,7 +182,7 @@ exports.getServicesByTechnicianId = async (req, res) => {
 
     const services = await Service.find({tecnico: technicianId});
 
-    if (!services) {
+    if (!services || services.length === 0) {
       return res.status(404).json({
         status: 'fail',
         message: 'No se han encontrado servicios asignados al tecnico'
@@ -138,6 +203,151 @@ exports.getServicesByTechnicianId = async (req, res) => {
       message: 'No se han podido obtener los servicios'
     })
   }
+}
+
+// Función para PATCH en /technician/:technicianId
+exports.updateServiceByTechnicianId = async (req, res) => {
+  try {
+    const technicianId = req.params.technicianId;
+    // Asumir que req.body incluye serviceId o algo, pero para simplicidad, quizás no. Espera, la ruta es /technician/:technicianId, pero para PATCH necesita serviceId.
+    // Esto es inconsistente. Probablemente la ruta debería ser /technician/:technicianId/:serviceId
+
+    // Para seguir, asumir que req.body tiene serviceId, pero mejor cambiar la ruta.
+
+    // Cambiar ruta a router.route('/technician/:technicianId/:serviceId').patch(updateServiceByTechnicianId).delete(deleteServiceByTechnicianId)
+
+    // Pero en PLANIFICACION dice PATCH/DELETE en /technician/:technicianId
+
+    // Para consistencia, cambiar.
+
+    // Primero, cambiar ruta.
+
+    // En routes: router.route('/technician/:technicianId').get(getServicesByTechnicianId).patch(updateServiceByTechnicianId).delete(deleteServiceByTechnicianId)
+
+    // Pero para PATCH, necesita serviceId. Cambiar a /technician/:technicianId/:serviceId
+
+    // Sí, hagámoslo.
+
+    // Cambiar en routes.
+
+    // router.route('/technician/:technicianId/:serviceId').patch(updateServiceByTechnicianId).delete(deleteServiceByTechnicianId)
+
+    // Y get queda en /technician/:technicianId
+
+    // Sí.
+
+    // Primero, cambiar ruta.
+
+    // En routes/serviceRoutes.js
+
+    // router.route('/technician/:technicianId').get(getServicesByTechnicianId)
+
+    // router.route('/technician/:technicianId/:serviceId').patch(updateServiceByTechnicianId).delete(deleteServiceByTechnicianId)
+
+    // Sí.
+
+    // Ahora, en controlador, updateServiceByTechnicianId toma technicianId y serviceId, verifica que el service pertenece al technician.
+
+    const serviceId = req.params.serviceId;
+
+    const service = await Service.findOne({ _id: serviceId, tecnico: technicianId });
+
+    if (!service) {
+
+      return res.status(404).json({
+
+        status: 'fail',
+
+        message: 'Servicio no encontrado para este técnico'
+
+      });
+
+    }
+
+    const serviceData = await Service.findByIdAndUpdate(serviceId, req.body, {
+
+      new: true,
+
+      runValidators: true,
+
+    });
+
+    res.status(200).json({
+
+      status: "success",
+
+      data: {
+
+        service: serviceData,
+
+      },
+
+    });
+
+  } catch (e) {
+
+    console.log(e);
+
+    res.status(400).json({
+
+      status: "fail",
+
+      message: "No se pudo actualizar el servicio",
+
+    });
+
+  }
+
+}
+
+// Similar para delete.
+
+exports.deleteServiceByTechnicianId = async (req, res) => {
+
+  try {
+
+    const technicianId = req.params.technicianId;
+
+    const serviceId = req.params.serviceId;
+
+    const service = await Service.findOne({ _id: serviceId, tecnico: technicianId });
+
+    if (!service) {
+
+      return res.status(404).json({
+
+        status: 'fail',
+
+        message: 'Servicio no encontrado para este técnico'
+
+      });
+
+    }
+
+    await Service.findByIdAndDelete(serviceId);
+
+    res.status(204).json({
+
+      status: "success",
+
+      data: null,
+
+    });
+
+  } catch (e) {
+
+    console.log(e);
+
+    res.status(400).json({
+
+      status: "fail",
+
+      message: "No se pudo eliminar el servicio",
+
+    });
+
+  }
+
 }
 
 exports.createService = async (req, res) => {

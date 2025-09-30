@@ -44,6 +44,6 @@ const rentalSchema = mongoose.Schema(
   }
 );
 
-const Rental = mongoose.model("Rental", rentalSchema);
+const Transaction = mongoose.model("Transaction", rentalSchema, "transactions");
 
-module.exports = Rental;
+module.exports = Transaction;

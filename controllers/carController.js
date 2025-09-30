@@ -113,9 +113,54 @@ exports.getCarsByOwnerId = async (req, res) => {
   }
 }
 
+// Funcion para POST en /owner/:ownerId
+exports.createCarByOwnerId = async (req, res) => {
+  try {
+    const ownerId = req.params.ownerId;
+    const carData = { ...req.body, propietario: ownerId };
+
+    // Verificar que el propietario existe (Store o Person)
+    const propietarioTipo = req.body.propietarioTipo || 'Person'; // Asumir Person por defecto
+    let ownerExists = false;
+    if (propietarioTipo === 'Person') {
+      const Person = require('../models/personModel');
+      ownerExists = await Person.findById(ownerId);
+    } else if (propietarioTipo === 'Store') {
+      const Store = require('../models/storeModel');
+      ownerExists = await Store.findById(ownerId);
+    }
+
+    if (!ownerExists) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Propietario no encontrado'
+      });
+    }
+
+    const newCar = await Car.create(carData);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        car: newCar,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el coche",
+    });
+  }
+}
+
 exports.createCar = async (req, res) => {
   try {
-    const newCar = await Car.create(req.body);
+    const carData = {
+      ...req.body,
+      propietarioTipo: 'Person' // asumimos person si se crea en /cars
+    }
+    const newCar = await Car.create(carData);
 
     if (!newCar) {
       return res.status(404).json({

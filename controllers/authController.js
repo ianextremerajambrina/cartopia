@@ -15,7 +15,7 @@ exports.register = [
   body('identificacion').notEmpty().isLength({ min: 9 }),
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 }),
-  body('fechaRegistro').isISO8601(),
+  //body('fechaRegistro').isISO8601(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

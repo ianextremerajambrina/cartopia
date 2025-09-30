@@ -1,6 +1,6 @@
 const express = require("express");
 const Person = require("../models/personModel");
-const Rental = require('../models/rentalModel');
+const Transaction = require('../models/rentalModel');
 const APIFeatures = require("../utils/apiFeatures");
 const Car = require("../models/carModel");
 
@@ -63,7 +63,7 @@ exports.getRentalsByPersonId = async (req, res) => {
       })
     }
 
-    const rentals = await Rental.find({cliente: personId});
+    const rentals = await Transaction.find({cliente: personId});
 
     if (!rentals || rentals.length === 0) {
       return res.status(404).json({
@@ -85,6 +85,38 @@ exports.getRentalsByPersonId = async (req, res) => {
       status: 'fail',
       message: 'No se pudo obtener los alquileres'
     })
+  }
+}
+
+// Función para POST en /:personId/rentals
+exports.createRentalByPersonId = async (req, res) => {
+  try {
+    const personId = req.params.personId;
+    const rentalData = { ...req.body, cliente: personId };
+
+    // Verificar que la persona existe
+    const person = await Person.findById(personId);
+    if (!person) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Persona no encontrada'
+      });
+    }
+
+    const newRental = await Transaction.create(rentalData);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        rental: newRental,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el alquiler",
+    });
   }
 }
 
@@ -130,6 +162,38 @@ exports.getCarsByPersonId = async (req,res) => {
   }
 }
 
+// Función para POST en /:personId/cars
+exports.createCarByPersonId = async (req, res) => {
+  try {
+    const personId = req.params.personId;
+    const carData = { ...req.body, propietario: personId, propietarioTipo: 'Person' };
+
+    // Verificar que la persona existe
+    const person = await Person.findById(personId);
+    if (!person) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Persona no encontrada'
+      });
+    }
+
+    const newCar = await Car.create(carData);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        car: newCar,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el coche",
+    });
+  }
+}
+
 //Función para ('/store/:storeId'): Ver personas con relación a la tienda (storeId)
 exports.getPersonsByStoreId = async (req, res) => {
   try {
@@ -157,12 +221,47 @@ exports.getPersonsByStoreId = async (req, res) => {
         status: 'error',
         message: 'No se ha podido obtener los datos de las personas'
       })
-    
+
   }
-  
 
 }
 
+// Función para POST en /store/:storeId
+exports.createPersonByStoreId = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const personData = { ...req.body, tienda: storeId, rol: req.body.rol || 'Staff' };
+
+    // Verificar que la tienda existe
+    const Store = require('../models/storeModel');
+    const store = await Store.findById(storeId);
+    if (!store) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Tienda no encontrada'
+      });
+    }
+
+    const newPerson = await Person.create(personData);
+
+    // Agregar el empleado a la lista de empleados de la tienda
+    store.empleados.push(newPerson._id);
+    await store.save();
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        person: newPerson,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el empleado",
+    });
+  }
+}
 
 // TODO: Verificar que el rol no sea staff o manager. En caso contrario indicar error, y crear empleados en store
 exports.createPerson = async (req, res) => {

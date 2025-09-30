@@ -73,7 +73,7 @@ const personSchema = mongoose.Schema(
     },
     fechaRegistro: {
       type: Date,
-      required: [true, "Una persona debe tener su fecha de registro"],
+      default: new Date().toISOString()
     },
     rol: {
       type: String,

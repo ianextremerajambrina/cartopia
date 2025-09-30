@@ -76,12 +76,12 @@ exports.getPaymentsByClientId = async (req, res) => {
   }
 };
 
-// funcion para "/store/:rentalId"
-exports.getPaymentsByRentalId = async (req, res) => {
+// funcion para "/transaction/:transactionId"
+exports.getPaymentsByTransactionId = async (req, res) => {
   try {
-    const rentalId = req.params.rentalId;
+    const transactionId = req.params.transactionId;
 
-    const payments = await Payment.find({transaccionRef: rentalId});
+    const payments = await Payment.find({transaccionRef: transactionId});
 
     if (!payments) {
       return res.status(400).json({
@@ -154,6 +154,70 @@ exports.deletePayment = async (req, res) => {
   try {
     const paymentId = req.params.paymentId;
     const payment = await Payment.findByIdAndDelete(paymentId);
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo eliminar el pago",
+    });
+  }
+};
+
+// Funcion para PATCH en /client/:clientId/:paymentId
+exports.updatePaymentByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const paymentId = req.params.paymentId;
+
+    // Verificar que el pago pertenece al cliente
+    const payment = await Payment.findOne({ _id: paymentId, cliente: clientId });
+    if (!payment) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Pago no encontrado para este cliente'
+      });
+    }
+
+    const paymentData = await Payment.findByIdAndUpdate(paymentId, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        payment: paymentData,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo actualizar el pago",
+    });
+  }
+};
+
+// Funcion para DELETE en /client/:clientId/:paymentId
+exports.deletePaymentByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const paymentId = req.params.paymentId;
+
+    // Verificar que el pago pertenece al cliente
+    const payment = await Payment.findOne({ _id: paymentId, cliente: clientId });
+    if (!payment) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Pago no encontrado para este cliente'
+      });
+    }
+
+    await Payment.findByIdAndDelete(paymentId);
     res.status(204).json({
       status: "success",
       data: null,

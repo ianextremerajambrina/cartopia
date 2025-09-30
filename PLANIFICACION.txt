@@ -38,6 +38,48 @@ Basándome en el estado actual de tu aplicación (controladores, rutas y modelos
 3. Expande rutas y tests en paralelo.
 4. Coordina con frontend para integración.
 
+### Automatización de Relaciones en Arrays de Personas
+
+#### Problema Identificado:
+Los arrays `coches.alquilados` y `coches.comprados` en el modelo `Person` no se actualizan automáticamente al crear alquileres, compras o coches. Esto requiere actualizaciones manuales, rompiendo consistencia y escalabilidad. Los controladores como `createCar` o `createRentalByPersonId` no manejan estas relaciones bidireccionales.
+
+#### Solución: Lógica Automática en Controladores
+Implementar actualizaciones automáticas post-creación para mantener consistencia sin intervención manual.
+
+#### Pasos de Implementación:
+1. **Actualizar `createCarByPersonId` (POST /persons/:personId/cars)**:
+   - Después de crear el coche: Buscar persona, agregar `newCar._id` a `person.coches.comprados`, y guardar.
+   - Validar que la persona existe.
+
+2. **Actualizar `createRentalByPersonId` (POST /persons/:personId/rentals)**:
+   - Después de crear la transacción: Buscar persona, agregar `rentalData.vehiculo` a `person.coches.alquilados`, y guardar.
+   - Cambiar `car.estado` a "alquilado" (buscar y actualizar coche).
+   - Validar existencia de persona y coche.
+
+3. **Actualizar `createPayment`**:
+   - Si `tipoPago === 'compra'` y `transaccionTipo === 'Car'`:
+     - Buscar coche, cambiar `car.propietario` a `cliente`, `car.propietarioTipo` a 'Person'.
+     - Buscar persona, agregar `transaccionRef` a `person.coches.comprados`.
+     - Guardar coche y persona.
+   - Validar que el coche no esté ya vendido/alquilado.
+
+4. **Agregar Endpoint para Devoluciones (PATCH /transactions/:transactionId/return)**:
+   - Cambiar `transaction.estado` a "devuelto", set `fechaDevolucion`.
+   - Remover `vehiculo` de `person.coches.alquilados`.
+   - Cambiar `car.estado` a "disponible".
+   - Validar que la transacción esté activa.
+
+5. **Consideraciones Generales**:
+   - **Validaciones**: Verificar existencia de entidades antes de actualizar.
+   - **Errores**: Manejar casos de conflicto (e.g., coche ya alquilado).
+   - **Testing**: Agregar pruebas para verificar arrays se actualicen automáticamente.
+   - **Alternativa**: Usar hooks en modelos (e.g., post-save en Transaction), pero controladores son más directos y controlables.
+
+#### Beneficios:
+- Elimina actualizaciones manuales.
+- Mantiene consistencia en relaciones.
+- Mejora UX y reduce errores.
+
 ### Planificación para implementar métodos POST, PATCH, DELETE faltantes
 
 #### Métodos faltantes identificados:

@@ -9,6 +9,10 @@ const {
   getReviewById,
   updateReview,
   deleteReview,
+  createReviewByClientId,
+  createReviewByCarId,
+  updateReviewByStoreId,
+  deleteReviewByStoreId,
 } = require('../controllers/reviewController');
 
 const router = express.Router();
@@ -18,8 +22,8 @@ const router = express.Router();
 
 router.route('/').get(getAllReviews).post(createReview);
 router.route('/:reviewId').get(getReviewById)
-router.route('/client/:clientId').get(getReviewsByClientId).patch(updateReview).delete(deleteReview); 
-router.route('/cars/:carId').get(getReviewsByCarId).patch(updateReview).delete(deleteReview); 
-router.route('/:storeId/:reviewId').get(getReviewByStoreId).patch(updateReview).delete(deleteReview);
+router.route('/client/:clientId').get(getReviewsByClientId).post(createReviewByClientId).patch(updateReview).delete(deleteReview);
+router.route('/cars/:carId').get(getReviewsByCarId).post(createReviewByCarId).patch(updateReview).delete(deleteReview); 
+router.route('/:storeId/:reviewId').get(getReviewByStoreId).patch(updateReviewByStoreId).delete(deleteReviewByStoreId);
 router.route('/store/:storeId').get(getReviewsByStoreId);
 module.exports = router;

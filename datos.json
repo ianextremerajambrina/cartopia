@@ -1,0 +1,288 @@
+{
+  "stores": [
+    {
+      "_id": "store1",
+      "nombreTienda": "AutoRent Madrid",
+      "ubicacion": {
+        "pais": "España",
+        "direccion": "Calle Gran Vía 123",
+        "codigoPostal": "28013",
+        "municipio": "Madrid",
+        "comunidadAutonoma": "Madrid"
+      },
+      "vehiculos": ["car1", "car2"],
+      "empleados": ["person2", "person3"]
+    },
+    {
+      "_id": "store2",
+      "nombreTienda": "Coches Barcelona",
+      "ubicacion": {
+        "pais": "España",
+        "direccion": "Rambla de Catalunya 456",
+        "codigoPostal": "08007",
+        "municipio": "Barcelona",
+        "comunidadAutonoma": "Cataluña"
+      },
+      "vehiculos": ["car3"],
+      "empleados": ["person4"]
+    }
+  ],
+  "persons": [
+    {
+      "_id": "person1",
+      "name": "Juan Pérez",
+      "identificacion": "12345678A",
+      "email": "juan@example.com",
+      "password": "$2a$12$hashedpassword1",  // Hashed password
+      "telefono": "600123456",
+      "ubicacion": {
+        "pais": "España",
+        "direccion": "Calle Ficticia 1",
+        "codigoPostal": "28001",
+        "municipio": "Madrid",
+        "comunidadAutonoma": "Madrid"
+      },
+      "tienda": null,
+      "coches": {
+        "alquilados": ["car4"],
+        "comprados": ["car5"]
+      },
+      "fechaRegistro": "2023-01-15T10:00:00.000Z",
+      "rol": "Cliente"
+    },
+    {
+      "_id": "person2",
+      "name": "María García",
+      "identificacion": "87654321B",
+      "email": "maria@example.com",
+      "password": "$2a$12$hashedpassword2",
+      "telefono": "600654321",
+      "ubicacion": {
+        "pais": "España",
+        "direccion": "Avenida Real 789",
+        "codigoPostal": "28013",
+        "municipio": "Madrid",
+        "comunidadAutonoma": "Madrid"
+      },
+      "tienda": "store1",
+      "coches": {
+        "alquilados": [],
+        "comprados": []
+      },
+      "fechaRegistro": "2022-05-10T09:00:00.000Z",
+      "rol": "Manager"
+    },
+    {
+      "_id": "person3",
+      "name": "Carlos López",
+      "identificacion": "11223344C",
+      "email": "carlos@example.com",
+      "password": "$2a$12$hashedpassword3",
+      "telefono": "600987654",
+      "ubicacion": {
+        "pais": "España",
+        "direccion": "Plaza Mayor 10",
+        "codigoPostal": "28012",
+        "municipio": "Madrid",
+        "comunidadAutonoma": "Madrid"
+      },
+      "tienda": "store1",
+      "coches": {
+        "alquilados": [],
+        "comprados": []
+      },
+      "fechaRegistro": "2022-06-20T11:00:00.000Z",
+      "rol": "Staff"
+    },
+    {
+      "_id": "person4",
+      "name": "Ana Martínez",
+      "identificacion": "44332211D",
+      "email": "ana@example.com",
+      "password": "$2a$12$hashedpassword4",
+      "telefono": "600112233",
+      "ubicacion": {
+        "pais": "España",
+        "direccion": "Paseo de Gracia 50",
+        "codigoPostal": "08008",
+        "municipio": "Barcelona",
+        "comunidadAutonoma": "Cataluña"
+      },
+      "tienda": "store2",
+      "coches": {
+        "alquilados": [],
+        "comprados": []
+      },
+      "fechaRegistro": "2023-03-05T14:00:00.000Z",
+      "rol": "Staff"
+    }
+  ],
+  "cars": [
+    {
+      "_id": "car1",
+      "marca": "Toyota",
+      "modelo": "Corolla",
+      "estado": "disponible",
+      "propietario": "store1",
+      "propietarioTipo": "Store",
+      "potencia": 120,
+      "fechaFabricacion": "2020-01-01T00:00:00.000Z",
+      "fechaCompra": "2020-02-01T00:00:00.000Z",
+      "precios": {
+        "compra": 15000,
+        "alquiler": 50
+      },
+      "kmRecorridos": 15000
+    },
+    {
+      "_id": "car2",
+      "marca": "Honda",
+      "modelo": "Civic",
+      "estado": "alquilado",
+      "propietario": "store1",
+      "propietarioTipo": "Store",
+      "potencia": 130,
+      "fechaFabricacion": "2019-05-15T00:00:00.000Z",
+      "fechaCompra": "2019-06-15T00:00:00.000Z",
+      "precios": {
+        "compra": 16000,
+        "alquiler": 55
+      },
+      "kmRecorridos": 20000
+    },
+    {
+      "_id": "car3",
+      "marca": "Ford",
+      "modelo": "Focus",
+      "estado": "disponible",
+      "propietario": "store2",
+      "propietarioTipo": "Store",
+      "potencia": 110,
+      "fechaFabricacion": "2021-03-10T00:00:00.000Z",
+      "fechaCompra": "2021-04-10T00:00:00.000Z",
+      "precios": {
+        "compra": 14000,
+        "alquiler": 45
+      },
+      "kmRecorridos": 10000
+    },
+    {
+      "_id": "car4",
+      "marca": "BMW",
+      "modelo": "X3",
+      "estado": "alquilado",
+      "propietario": "person1",
+      "propietarioTipo": "Person",
+      "potencia": 200,
+      "fechaFabricacion": "2018-08-20T00:00:00.000Z",
+      "fechaCompra": "2022-01-10T00:00:00.000Z",
+      "precios": {
+        "compra": 30000,
+        "alquiler": 100
+      },
+      "kmRecorridos": 50000
+    },
+    {
+      "_id": "car5",
+      "marca": "Audi",
+      "modelo": "A4",
+      "estado": "vendido",
+      "propietario": "person1",
+      "propietarioTipo": "Person",
+      "potencia": 180,
+      "fechaFabricacion": "2017-11-05T00:00:00.000Z",
+      "fechaCompra": "2021-12-01T00:00:00.000Z",
+      "precios": {
+        "compra": 25000,
+        "alquiler": 80
+      },
+      "kmRecorridos": 60000
+    }
+  ],
+  "transactions": [
+    {
+      "_id": "transaction1",
+      "tienda": "store1",
+      "cliente": "person1",
+      "vehiculo": "car2",
+      "estado": "activo",
+      "fechaInicio": "2024-09-01T08:00:00.000Z",
+      "fechaFin": "2024-09-10T18:00:00.000Z",
+      "fechaDevolucion": null,
+      "precioTotal": 500
+    },
+    {
+      "_id": "transaction2",
+      "tienda": "store2",
+      "cliente": "person1",
+      "vehiculo": "car3",
+      "estado": "devuelto",
+      "fechaInicio": "2024-08-15T09:00:00.000Z",
+      "fechaFin": "2024-08-20T17:00:00.000Z",
+      "fechaDevolucion": "2024-08-20T16:00:00.000Z",
+      "precioTotal": 225
+    }
+  ],
+  "payments": [
+    {
+      "_id": "payment1",
+      "cliente": "person1",
+      "tipoPago": "alquiler",
+      "precio": 500,
+      "transaccionTipo": "Transaction",
+      "transaccionRef": "transaction1"
+    },
+    {
+      "_id": "payment2",
+      "cliente": "person1",
+      "tipoPago": "alquiler",
+      "precio": 225,
+      "transaccionTipo": "Transaction",
+      "transaccionRef": "transaction2"
+    },
+    {
+      "_id": "payment3",
+      "cliente": "person1",
+      "tipoPago": "compra",
+      "precio": 25000,
+      "transaccionTipo": "Car",
+      "transaccionRef": "car5"
+    }
+  ],
+  "reviews": [
+    {
+      "_id": "review1",
+      "cliente": "person1",
+      "valoracion": 5,
+      "coche": "car2",
+      "descripcion": "Excelente coche, muy cómodo y eficiente.",
+      "tienda": "store1"
+    },
+    {
+      "_id": "review2",
+      "cliente": "person1",
+      "valoracion": 4,
+      "coche": "car3",
+      "descripcion": "Buen rendimiento, pero un poco caro.",
+      "tienda": "store2"
+    }
+  ],
+  "services": [
+    {
+      "_id": "service1",
+      "tipoServicio": "mantenimiento",
+      "tecnico": "person3",
+      "precio": 200,
+      "vehiculo": "car1",
+      "tienda": "store1"
+    },
+    {
+      "_id": "service2",
+      "tipoServicio": "reparacion",
+      "tecnico": "person4",
+      "precio": 500,
+      "vehiculo": "car3",
+      "tienda": "store2"
+    }
+  ]
+}
