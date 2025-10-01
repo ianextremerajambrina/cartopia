@@ -92,7 +92,42 @@ Implementar actualizaciones automáticas post-creación para mantener consistenc
 - storeRoutes: POST en /:storeId/cars, /:storeId/employees; PATCH/DELETE en /:storeId/cars/:carId
 
 #### Fases de implementación:
-1. **Controllers**: Agregar funciones nuevas (e.g., createCarByOwner, updatePaymentsByClient) con validación, auth y checks de existencia.
+1. **Controllers**: Agregar funciones nuevas (e.g., createCarByOwner, updatePaymentsByClient) con validación, auth y checks de existencia. Actualizar funciones update/delete existentes para soportar rutas anidadas con múltiples parámetros (e.g., /client/:clientId/:paymentId), verificando pertenencia (e.g., que el pago pertenezca al cliente).
 2. **Routes**: Importar y agregar métodos (.post, .patch, .delete) con middleware.
 3. **Validación/Testing**: Usar express-validator, probar con Postman.
 4. **Limpieza**: Remover TODOs, unificar errores.
+
+### Plan para Financiación de Coches (Pagos Mensuales)
+Implementar pagos mensuales para compras de coche usando campos opcionales en el modelo `Payment`, sin crear modelos nuevos. Esto permite financiar un coche en cuotas, con control básico (extensible a morosos).
+
+#### Campos Agregados en Payment (Ya Implementados)
+- `cuotasTotales`: Número total de cuotas (e.g., 36 para 3 años).
+- `cuotaActual`: Número de la cuota actual (1, 2, ...).
+- `fechaProximaCuota`: Fecha del próximo pago.
+- `montoRestante`: Dinero pendiente por pagar.
+- `financiado`: Booleano para marcar financiaciones (true solo para estos casos).
+
+#### Flujo de Financiación
+1. **Inicio de Financiación**: Cliente elige financiar un coche. Crea primer `Payment` con `financiado: true`, `cuotaActual: 1`, etc.
+2. **Pagos Mensuales**: Cada mes, crea un nuevo `Payment` con mismo `transaccionRef` (ID del coche), incrementando `cuotaActual`, actualizando `montoRestante`.
+3. **Completar Financiación**: Cuando `montoRestante <= 0`, actualiza coche/persona automáticamente.
+
+#### Plan para Actualizar createPayment (Si Necesario)
+Aunque la función básica funciona, para financiaciones:
+- En `createPayment`, si `req.body.financiado === true` y `tipoPago === 'compra'`:
+  - Busca coche: `const car = await Car.findById(transaccionRef);`.
+  - Valida estado (no vendido/alquilado).
+  - Si `cuotaActual === 1`: Actualiza coche (propietario a cliente, estado "financiado" si agregas), persona (`coches.comprados`).
+  - Para cuotas subsiguientes: Suma precios de Payments relacionados, verifica acumulado vs. precio total, actualiza `montoRestante`.
+  - Maneja errores (e.g., cuota fuera de rango).
+- Agrega control de morosos: Campo `moroso` en Person, actualiza si pagos atrasados (compara `fechaProximaCuota` con hoy).
+
+#### Beneficios
+- Flexibilidad para pagos únicos o mensuales.
+- Reutiliza Payment sin complejidad extra.
+- Extensible: Agrega lógica para intereses, penalizaciones.
+
+#### Próximos Pasos
+- Implementar lógica en createPayment.
+- Agregar estado "financiado" en Car si necesario.
+- Tests para financiaciones completas.

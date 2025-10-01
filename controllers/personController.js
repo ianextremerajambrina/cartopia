@@ -110,9 +110,31 @@ exports.createRentalByPersonId = async (req, res) => {
     // Creación de nuevo alquiler
     const newRental = await Transaction.create(rentalData);
 
+    // Asignamos el coche alquilado a la persona
     if (newRental)  {
-      person.coches.alquilados.push(newRental.vehiculo);
+      const updatePerson = await Person.findByIdAndUpdate(personId, {$push: {'coches.alquilados': newRental.vehiculo}},{new: true});
+    
+      if (!updatePerson) {
+        return res.status(400).json({
+      status: "fail",
+      message: "No se pudo actualizar los datos de la persona",
+    });
+      }
+
     }
+
+    // Actualizamos el estado del coche a 'alquilado'
+
+    const car = await Car.findByIdAndUpdate(rentalData.vehiculo,{estado: 'alquilado'},{new: true});
+
+    if (!car) {
+      return res.status(400).json({
+      status: "fail",
+      message: "No se pudo actualizar el coche",
+    });
+    }
+
+
 
     res.status(201).json({
       status: "success",
@@ -189,7 +211,7 @@ exports.createCarByPersonId = async (req, res) => {
 
     // Objeto JSON con los datos del coche
 
-    const carData = { ...req.body, propietario: personData._id, propietarioTipo: 'Person' };
+    const carData = { ...req.body, propietario: personData._id, propietarioTipo: 'Person', estado: 'comprado' };
 
     // Creamos el coche y añadimos el coche a la persona
 

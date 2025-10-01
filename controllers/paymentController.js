@@ -143,6 +143,7 @@ exports.getPaymentsByTransactionId = async (req, res) => {
 // TODO: 'compra' -> 'Car', 'alquiler' -> 'Transaction'. Si es una compra, ponemos transaccionTipo en 'Car', de lo contrario, 'Transaction'
 exports.createPayment = async (req, res) => {
   try {
+    // TODO: Dado que transactionRef es el id del coche en compras, debo comprobar el transactionRef del body
     const newPayment = await Payment.create(req.body);
 
     if (!newPayment) {
@@ -155,7 +156,7 @@ exports.createPayment = async (req, res) => {
     // Buscamos el coche en la transacción a traves de la referencia del pago
 
     if (newPayment.tipoPago === 'compra' && newPayment.transaccionTipo === 'Car') {
-      const car = await Transaction.find({_id: newPayment.transaccionRef}); // Encuentro la transacción con el id del coche. Cambiar a findOne??
+      const car = await Car.findById(newPayment.transaccionRef); // Encuentro el pago con el id del coche
 
       if (!car) {
         return res.status(404).json({
@@ -165,10 +166,17 @@ exports.createPayment = async (req, res) => {
       }
 
       const clientId = newPayment.cliente;
-      const carId = car.vehiculo; // Id del coche
+      const carId = car._id; // Id del coche
+
+      if (car.estado === 'alquilado' || car.estado === 'vendido') {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Coche ya alquilado o comprado'
+        })
+      }
 
       // Buscamos y actualizamos los datos del coche
-      const carData = await Car.findByIdAndUpdate(carId,{propietarioTipo: 'Person', propietario: clientId},{new: true});
+      const carData = await Car.findByIdAndUpdate(carId,{propietarioTipo: 'Person', propietario: clientId, estado: 'vendido'},{new: true});
 
       if (!carData) {
         return res.status(400).json({
@@ -177,13 +185,6 @@ exports.createPayment = async (req, res) => {
         })
       }
 
-      // Validamos si el coche se ha vendido o alquilado
-      if (carData.estado === 'vendido' || carData.estado === 'alquilado') {
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Coche ya alquilado o comprado'
-        })
-      }
 
       // Buscamos y actualizamos los datos de la persona
       const personData = await Person.findByIdAndUpdate(clientId,{$push: {'coches.comprados': carId}},{new: true})
@@ -196,8 +197,6 @@ exports.createPayment = async (req, res) => {
       }
 
     }
-
-
 
     res.status(201).json({
       status: "success",
