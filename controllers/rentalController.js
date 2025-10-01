@@ -1,6 +1,8 @@
 const express = require("express");
 const Transaction = require("../models/rentalModel");
 const APIFeatures = require("../utils/apiFeatures");
+const Car = require("../models/carModel");
+const Person = require("../models/personModel");
 
 exports.getAllRentals = async (req, res) => {
   try {
@@ -83,12 +85,12 @@ exports.createRentalByStoreId = async (req, res) => {
     const rentalData = { ...req.body, tienda: storeId };
 
     // Verificar que la tienda existe
-    const Store = require('../models/storeModel');
+    const Store = require("../models/storeModel");
     const store = await Store.findById(storeId);
     if (!store) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Tienda no encontrada'
+        status: "fail",
+        message: "Tienda no encontrada",
       });
     }
 
@@ -116,11 +118,14 @@ exports.updateRentalByStoreId = async (req, res) => {
     const rentalId = req.params.rentalId;
 
     // Verificar que el alquiler pertenece a la tienda
-    const rental = await Transaction.findOne({ _id: rentalId, tienda: storeId });
+    const rental = await Transaction.findOne({
+      _id: rentalId,
+      tienda: storeId,
+    });
     if (!rental) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Alquiler no encontrado en esta tienda'
+        status: "fail",
+        message: "Alquiler no encontrado en esta tienda",
       });
     }
 
@@ -151,11 +156,14 @@ exports.deleteRentalByStoreId = async (req, res) => {
     const rentalId = req.params.rentalId;
 
     // Verificar que el alquiler pertenece a la tienda
-    const rental = await Transaction.findOne({ _id: rentalId, tienda: storeId });
+    const rental = await Transaction.findOne({
+      _id: rentalId,
+      tienda: storeId,
+    });
     if (!rental) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Alquiler no encontrado en esta tienda'
+        status: "fail",
+        message: "Alquiler no encontrado en esta tienda",
       });
     }
 
@@ -208,12 +216,12 @@ exports.createRentalByCarId = async (req, res) => {
     const rentalData = { ...req.body, vehiculo: carId };
 
     // Verificar que el coche existe
-    const Car = require('../models/carModel');
+    const Car = require("../models/carModel");
     const car = await Car.findById(carId);
     if (!car) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Coche no encontrado'
+        status: "fail",
+        message: "Coche no encontrado",
       });
     }
 
@@ -241,11 +249,14 @@ exports.updateRentalByCarId = async (req, res) => {
     const rentalId = req.params.rentalId;
 
     // Verificar que el alquiler pertenece al coche
-    const rental = await Transaction.findOne({ _id: rentalId, vehiculo: carId });
+    const rental = await Transaction.findOne({
+      _id: rentalId,
+      vehiculo: carId,
+    });
     if (!rental) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Alquiler no encontrado para este coche'
+        status: "fail",
+        message: "Alquiler no encontrado para este coche",
       });
     }
 
@@ -276,11 +287,14 @@ exports.deleteRentalByCarId = async (req, res) => {
     const rentalId = req.params.rentalId;
 
     // Verificar que el alquiler pertenece al coche
-    const rental = await Transaction.findOne({ _id: rentalId, vehiculo: carId });
+    const rental = await Transaction.findOne({
+      _id: rentalId,
+      vehiculo: carId,
+    });
     if (!rental) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Alquiler no encontrado para este coche'
+        status: "fail",
+        message: "Alquiler no encontrado para este coche",
       });
     }
 
@@ -333,12 +347,12 @@ exports.createRentalByClientId = async (req, res) => {
     const rentalData = { ...req.body, cliente: clientId };
 
     // Verificar que el cliente existe
-    const Person = require('../models/personModel');
+    const Person = require("../models/personModel");
     const person = await Person.findById(clientId);
     if (!person) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Cliente no encontrado'
+        status: "fail",
+        message: "Cliente no encontrado",
       });
     }
 
@@ -366,11 +380,14 @@ exports.updateRentalByClientId = async (req, res) => {
     const rentalId = req.params.rentalId;
 
     // Verificar que el alquiler pertenece al cliente
-    const rental = await Transaction.findOne({ _id: rentalId, cliente: clientId });
+    const rental = await Transaction.findOne({
+      _id: rentalId,
+      cliente: clientId,
+    });
     if (!rental) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Alquiler no encontrado para este cliente'
+        status: "fail",
+        message: "Alquiler no encontrado para este cliente",
       });
     }
 
@@ -401,11 +418,14 @@ exports.deleteRentalByClientId = async (req, res) => {
     const rentalId = req.params.rentalId;
 
     // Verificar que el alquiler pertenece al cliente
-    const rental = await Transaction.findOne({ _id: rentalId, cliente: clientId });
+    const rental = await Transaction.findOne({
+      _id: rentalId,
+      cliente: clientId,
+    });
     if (!rental) {
       return res.status(404).json({
-        status: 'fail',
-        message: 'Alquiler no encontrado para este cliente'
+        status: "fail",
+        message: "Alquiler no encontrado para este cliente",
       });
     }
 
@@ -478,6 +498,86 @@ exports.deleteRental = async (req, res) => {
     res.status(400).json({
       status: "fail",
       message: "No se pudo eliminar el alquiler",
+    });
+  }
+};
+
+// Funcion para :rentalId/return
+exports.returnCarByRentalId = async (req, res) => {
+  try {
+    const rentalId = req.params.rentalId;
+
+    const rental = await Transaction.findById(rentalId);
+
+    if (!rental) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se ha encontrado la transacción",
+      });
+    }
+
+    if (rental.estado !== "activo") {
+      return res.status(400).json({
+        status: "fail",
+        message: "La transacción no está activa",
+      });
+    }
+
+    const updatedRental = await Transaction.findByIdAndUpdate(
+      rentalId,
+      {
+        fechaDevolucion: new Date(),
+        estado: "devuelto",
+      },
+      { new: true }
+    );
+
+    if (!updatedRental) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No se han podido actualizar los datos de la transacción",
+      });
+    }
+
+    // Cambiar Car.estado a disponible
+    const carUpdate = await Car.findByIdAndUpdate(
+      rental.vehiculo,
+      { estado: "disponible" },
+      { new: true }
+    );
+
+    if (!carUpdate) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No se han podido actualizar los datos del coche",
+      });
+    }
+
+    // Quitar coche de Person.coches.alquilados
+    const personUpdate = await Person.findByIdAndUpdate(
+      rental.cliente,
+      { $pull: { "coches.alquilados": rental.vehiculo } },
+      { new: true }
+    );
+
+    if (!personUpdate) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No se han podido actualizar los datos de la persona",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        rental: updatedRental,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      status: "error",
+      message: "Error interno del servidor",
     });
   }
 };

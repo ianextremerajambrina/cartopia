@@ -33,7 +33,7 @@
       "name": "Juan Pérez",
       "identificacion": "12345678A",
       "email": "juan@example.com",
-      "password": "$2a$12$hashedpassword1",  // Hashed password
+      "password": "password123",
       "telefono": "600123456",
       "ubicacion": {
         "pais": "España",
@@ -55,7 +55,7 @@
       "name": "María García",
       "identificacion": "87654321B",
       "email": "maria@example.com",
-      "password": "$2a$12$hashedpassword2",
+      "password": "password123",
       "telefono": "600654321",
       "ubicacion": {
         "pais": "España",
@@ -77,7 +77,7 @@
       "name": "Carlos López",
       "identificacion": "11223344C",
       "email": "carlos@example.com",
-      "password": "$2a$12$hashedpassword3",
+      "password": "password123",
       "telefono": "600987654",
       "ubicacion": {
         "pais": "España",
@@ -99,7 +99,7 @@
       "name": "Ana Martínez",
       "identificacion": "44332211D",
       "email": "ana@example.com",
-      "password": "$2a$12$hashedpassword4",
+      "password": "password123",
       "telefono": "600112233",
       "ubicacion": {
         "pais": "España",

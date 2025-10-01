@@ -1,6 +1,9 @@
 const express = require("express");
 const Payment = require("../models/paymentModel");
 const APIFeatures = require("../utils/apiFeatures");
+const Transaction = require("../models/rentalModel");
+const Person = require("../models/personModel");
+const Car = require("../models/carModel");
 
 exports.getAllPayments = async (req, res) => {
   try {
@@ -76,6 +79,36 @@ exports.getPaymentsByClientId = async (req, res) => {
   }
 };
 
+// Funcion para "/client/:clientId/:paymentId"
+exports.getPaymentByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const paymentId = req.params.paymentId;
+    const clientPayment = await Payment.findOne({ cliente: clientId, _id: paymentId });
+
+    if (!clientPayment) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No se han encontrado datos",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        payments: clientPayment,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+
+    res.status(400).json({
+      status: "error",
+      message: "Error en la búsqueda de datos",
+    });
+  }
+};
+
 // funcion para "/transaction/:transactionId"
 exports.getPaymentsByTransactionId = async (req, res) => {
   try {
@@ -106,11 +139,65 @@ exports.getPaymentsByTransactionId = async (req, res) => {
   }
 }
 
-//TODO: Si tipoPago = alquiler verificamos que transaccionRef exista en Rental antes del pago, permitiendo múltiples pagos sin duplicar rentals
-// TODO: 'compra' -> 'Car', 'alquiler' -> 'Rental'. Si es una compra, ponemos transaccionTipo en 'Car', de lo contrario, 'Rental'
+//TODO: Si tipoPago = alquiler verificamos que transaccionRef exista en Transaction antes del pago, permitiendo múltiples pagos sin duplicar Transactions
+// TODO: 'compra' -> 'Car', 'alquiler' -> 'Transaction'. Si es una compra, ponemos transaccionTipo en 'Car', de lo contrario, 'Transaction'
 exports.createPayment = async (req, res) => {
   try {
     const newPayment = await Payment.create(req.body);
+
+    if (!newPayment) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Error al crear el pago'
+      })
+    }
+
+    // Buscamos el coche en la transacción a traves de la referencia del pago
+
+    if (newPayment.tipoPago === 'compra' && newPayment.transaccionTipo === 'Car') {
+      const car = await Transaction.find({_id: newPayment.transaccionRef}); // Encuentro la transacción con el id del coche. Cambiar a findOne??
+
+      if (!car) {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'Coche no encontrado'
+        })
+      }
+
+      const clientId = newPayment.cliente;
+      const carId = car.vehiculo; // Id del coche
+
+      // Buscamos y actualizamos los datos del coche
+      const carData = await Car.findByIdAndUpdate(carId,{propietarioTipo: 'Person', propietario: clientId},{new: true});
+
+      if (!carData) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'No se ha podido actualizar los datos'
+        })
+      }
+
+      // Validamos si el coche se ha vendido o alquilado
+      if (carData.estado === 'vendido' || carData.estado === 'alquilado') {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Coche ya alquilado o comprado'
+        })
+      }
+
+      // Buscamos y actualizamos los datos de la persona
+      const personData = await Person.findByIdAndUpdate(clientId,{$push: {'coches.comprados': carId}},{new: true})
+
+      if (!personData) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'No se ha podido actualizar los datos de la persona'
+        })
+      }
+
+    }
+
+
 
     res.status(201).json({
       status: "success",

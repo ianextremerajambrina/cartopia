@@ -91,8 +91,9 @@ exports.getRentalsByPersonId = async (req, res) => {
 // Función para POST en /:personId/rentals
 exports.createRentalByPersonId = async (req, res) => {
   try {
+
+    // Buscamos la persona y validamos que exista
     const personId = req.params.personId;
-    const rentalData = { ...req.body, cliente: personId };
 
     // Verificar que la persona existe
     const person = await Person.findById(personId);
@@ -103,7 +104,15 @@ exports.createRentalByPersonId = async (req, res) => {
       });
     }
 
+    // Objeto con los datos del alquiler
+    const rentalData = { ...req.body, cliente: personId };
+
+    // Creación de nuevo alquiler
     const newRental = await Transaction.create(rentalData);
+
+    if (newRental)  {
+      person.coches.alquilados.push(newRental.vehiculo);
+    }
 
     res.status(201).json({
       status: "success",
@@ -166,18 +175,29 @@ exports.getCarsByPersonId = async (req,res) => {
 exports.createCarByPersonId = async (req, res) => {
   try {
     const personId = req.params.personId;
-    const carData = { ...req.body, propietario: personId, propietarioTipo: 'Person' };
 
-    // Verificar que la persona existe
-    const person = await Person.findById(personId);
-    if (!person) {
+    // Verificamos que la persona exista
+
+    const personData = await Person.findById(personId);
+
+    if (!personData) {
       return res.status(404).json({
         status: 'fail',
         message: 'Persona no encontrada'
       });
     }
 
+    // Objeto JSON con los datos del coche
+
+    const carData = { ...req.body, propietario: personData._id, propietarioTipo: 'Person' };
+
+    // Creamos el coche y añadimos el coche a la persona
+
     const newCar = await Car.create(carData);
+
+    if (newCar) {
+      personData.coches.comprados.push(carData._id);
+    }
 
     res.status(201).json({
       status: "success",

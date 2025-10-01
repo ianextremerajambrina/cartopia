@@ -220,6 +220,7 @@ exports.deleteStore = async (req, res) => {
   }
 };
 
+// TODO: Asignar Car a la persona correspondiente de la tienda
 exports.createCarInStore = async (req, res) => {
   try {
     const storeId = req.params.storeId;
@@ -324,7 +325,7 @@ exports.deleteCarFromStore = async (req, res) => {
 exports.createEmployeeInStore = async (req, res) => {
   try {
     const storeId = req.params.storeId;
-    const personData = { ...req.body, tienda: storeId, rol: req.body.rol || 'Staff' };
+    const personData = { ...req.body, tienda: storeId, rol: req.body.rol || 'Staff' || 'Manager' }; // TODO: Validar concienzudamente los roles en middleware
 
     // Verificar que la tienda existe
     const store = await Store.findById(storeId);
@@ -335,7 +336,16 @@ exports.createEmployeeInStore = async (req, res) => {
       });
     }
 
+    // añadimos a la persona con el id de la tienda
+
     const newPerson = await Person.create(personData);
+
+    if (!newPerson) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'No se ha podido crear a la persona'
+      });
+    }
 
     // Agregar el empleado a la lista de empleados de la tienda
     store.empleados.push(newPerson._id);
