@@ -58,6 +58,38 @@ exports.getCarById = async (req, res) => {
   }
 };
 
+// Endpoint: POST /api/v1/cars
+// TODO: Asignar vehículo a propietario teniendo en cuenta vendido o alquilado
+exports.createCar = async (req, res) => {
+  try {
+    const carData = {
+      ...req.body,
+      propietarioTipo: "Person", // asumimos person si se crea en /cars
+    };
+    const newCar = await Car.create(carData);
+
+    if (!newCar) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Coche no creado",
+      });
+    }
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        car: newCar,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo crear el coche",
+    });
+  }
+};
+
 // Endpoint: GET /api/v1/cars/owner/:ownerId/cars
 // Funcion para '/owner/:ownerId'
 exports.getCarsByOwnerId = async (req, res) => {
@@ -263,6 +295,34 @@ exports.deleteCarByOwnerId = async (req, res) => {
     res.status(400).json({
       status: "fail",
       message: "No se pudo borrar los datos del coche",
+    });
+  }
+};
+exports.getAllCarsInStore = async (req, res) => {
+  try {
+    // TODO: Debe existir este parámetro en la ruta :storeId, que estará en req.query.params
+    const features = new APIFeatures(
+      Car.find({ propietarioTipo: "Store", propietario: req.params.storeId }),
+      req.query
+    ) // TODO: Usaremos APIFeatures para filtrar por el storeId
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const cars = await features.query;
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cars,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudieron obtener los coches",
     });
   }
 };
