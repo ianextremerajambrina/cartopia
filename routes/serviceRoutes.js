@@ -12,6 +12,7 @@ const {
   createServiceByCarId,
   updateServiceByTechnicianId,
   deleteServiceByTechnicianId,
+  deleteServicesByStoreId
 } = require('../controllers/serviceController');
 
 const router = express.Router();
@@ -20,7 +21,7 @@ const router = express.Router();
 
 router.route('/').get(getAllServices).post(createService);
 router.route('/:serviceId').get(getServiceById).patch(updateService).delete(deleteService);
-router.route('/:storeId').get(getServicesByStoreId).post(createServiceByStoreId);
+router.route('/:storeId').get(getServicesByStoreId).post(createServiceByStoreId).delete(deleteServicesByStoreId);
 router.route('/technician/:technicianId').get(getServicesByTechnicianId);
 router.route('/technician/:technicianId/:serviceId').patch(updateServiceByTechnicianId).delete(deleteServiceByTechnicianId);
 router.route('/cars/:carId').get(getServicesByCarId).post(createServiceByCarId)

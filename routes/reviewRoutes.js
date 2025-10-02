@@ -22,8 +22,9 @@ const router = express.Router();
 
 router.route('/').get(getAllReviews).post(createReview);
 router.route('/:reviewId').get(getReviewById)
-router.route('/client/:clientId').get(getReviewsByClientId).post(createReviewByClientId).patch(updateReview).delete(deleteReview);
-router.route('/cars/:carId').get(getReviewsByCarId).post(createReviewByCarId).patch(updateReview).delete(deleteReview); 
+// TODO: Revisar si estas rutas (las comentadas) son necesarias
+/* router.route('/client/:clientId').get(getReviewsByClientId).post(createReviewByClientId).patch(updateReview).delete(deleteReview);
+router.route('/cars/:carId').get(getReviewsByCarId).post(createReviewByCarId).patch(updateReview).delete(deleteReview);  */
 router.route('/:storeId/:reviewId').get(getReviewByStoreId).patch(updateReviewByStoreId).delete(deleteReviewByStoreId);
 router.route('/store/:storeId').get(getReviewsByStoreId);
 module.exports = router;

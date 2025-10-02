@@ -9,6 +9,7 @@ const signToken = (id) => {
   });
 };
 
+// Endpoint: POST /api/v1/register
 // Register a new user (default role: Cliente)
 exports.register = [
   body('name').notEmpty().trim(),
@@ -41,6 +42,7 @@ exports.register = [
   },
 ];
 
+// Endpoint: POST /api/v1/login
 // Login
 exports.login = [
   body('email').isEmail(),
@@ -72,6 +74,7 @@ exports.login = [
   },
 ];
 
+// Endpoint: POST /api/v1/logout
 // Logout (client-side, just return success)
 exports.logout = (req, res) => {
   res.status(200).json({ status: 'success', message: 'Logged out successfully' });

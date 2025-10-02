@@ -180,13 +180,46 @@ exports.deleteRentalByStoreId = async (req, res) => {
     });
   }
 };
+
+// Funcion para /client/:clientId
+exports.deleteRentalsByClientId = async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    // Verificar que el alquiler pertenece al cliente
+    const rental = await Transaction.find({
+      cliente: clientId,
+    });
+
+    if (rental.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message:
+          "Alquileres no encontrados en esta tienda para el cliente especificado",
+      });
+    }
+
+    await Transaction.deleteMany({ tienda: clientId });
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo eliminar el alquiler",
+    });
+  }
+};
+
 exports.getRentalsByCarId = async (req, res) => {
   try {
     const carId = req.params.carId;
 
     const rentals = await Transaction.find({ vehiculo: carId });
 
-    if (!rentals || rentals.length === 0) {
+    if (rentals.length === 0) {
       return res.status(404).json({
         status: "fail",
         message: "No se han encontrado alquileres por el valor especificado",
@@ -347,7 +380,6 @@ exports.createRentalByClientId = async (req, res) => {
     const rentalData = { ...req.body, cliente: clientId };
 
     // Verificar que el cliente existe
-    const Person = require("../models/personModel");
     const person = await Person.findById(clientId);
     if (!person) {
       return res.status(404).json({
@@ -526,7 +558,7 @@ exports.returnCarByRentalId = async (req, res) => {
     const updatedRental = await Transaction.findByIdAndUpdate(
       rentalId,
       {
-        fechaDevolucion: new Date(),
+        fechaDevolucion: new Date().toISOString(),
         estado: "devuelto",
       },
       { new: true }

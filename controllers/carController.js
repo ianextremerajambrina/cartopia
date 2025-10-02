@@ -1,7 +1,10 @@
 const express = require("express");
 const Car = require("../models/carModel");
+const Store = require("../models/storeModel");
+const Person = require("../models/personModel");
 const APIFeatures = require("../utils/apiFeatures");
 
+// Endpoint: GET /api/v1/cars
 exports.getAllCars = async (req, res) => {
   try {
     const features = new APIFeatures(Car.find(), req.query)
@@ -27,35 +30,7 @@ exports.getAllCars = async (req, res) => {
   }
 };
 
-exports.getAllCarsInStore = async (req, res) => {
-  try {
-    // TODO: Debe existir este parámetro en la ruta :storeId, que estará en req.query.params
-    const features = new APIFeatures(
-      Car.find({ propietarioTipo: "Store", propietario: req.params.storeId }),
-      req.query
-    ) // TODO: Usaremos APIFeatures para filtrar por el storeId
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-
-    const cars = await features.query;
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        cars,
-      },
-    });
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({
-      status: "fail",
-      message: "No se pudieron obtener los coches",
-    });
-  }
-};
-
+// Endpoint: GET /api/v1/cars/:carId
 exports.getCarById = async (req, res) => {
   try {
     const id = req.params.carId;
@@ -83,6 +58,7 @@ exports.getCarById = async (req, res) => {
   }
 };
 
+// Endpoint: GET /api/v1/cars/owner/:ownerId/cars
 // Funcion para '/owner/:ownerId'
 exports.getCarsByOwnerId = async (req, res) => {
   try {
@@ -113,20 +89,22 @@ exports.getCarsByOwnerId = async (req, res) => {
   }
 };
 
+// Endpoint: POST /api/v1/cars/owner/:ownerId/cars
 // Funcion para POST en /owner/:ownerId
 exports.createCarByOwnerId = async (req, res) => {
   try {
     const ownerId = req.params.ownerId;
     const carData = { ...req.body, propietario: ownerId };
 
+    // TODO: Consultar que el ownerId tenga coches. De esta forma se puede saber si es Person o Store
+    // TODO: Reforzar comprobaciones
+
     // Verificar que el propietario existe (Store o Person)
     const propietarioTipo = req.body.propietarioTipo || "Person"; // Asumir Person por defecto
     let ownerExists = false;
     if (propietarioTipo === "Person") {
-      const Person = require("../models/personModel");
       ownerExists = await Person.findById(ownerId);
     } else if (propietarioTipo === "Store") {
-      const Store = require("../models/storeModel");
       ownerExists = await Store.findById(ownerId);
     }
 
@@ -154,37 +132,7 @@ exports.createCarByOwnerId = async (req, res) => {
   }
 };
 
-// TODO: Asignar vehículo a propietario teniendo en cuenta vendido o alquilado
-exports.createCar = async (req, res) => {
-  try {
-    const carData = {
-      ...req.body,
-      propietarioTipo: "Person", // asumimos person si se crea en /cars
-    };
-    const newCar = await Car.create(carData);
-
-    if (!newCar) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Coche no creado",
-      });
-    }
-
-    res.status(201).json({
-      status: "success",
-      data: {
-        car: newCar,
-      },
-    });
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({
-      status: "fail",
-      message: "No se pudo crear el coche",
-    });
-  }
-};
-
+// Endpoint: PATCH /api/v1/cars/:carId
 exports.updateCar = async (req, res) => {
   try {
     const carId = req.params.carId;
@@ -215,6 +163,7 @@ exports.updateCar = async (req, res) => {
   }
 };
 
+// Endpoint: DELETE /api/v1/cars/:carId
 exports.deleteCar = async (req, res) => {
   try {
     const carId = req.params.carId;
@@ -229,6 +178,91 @@ exports.deleteCar = async (req, res) => {
     res.status(400).json({
       status: "fail",
       message: "No se pudo eliminar el coche",
+    });
+  }
+};
+
+// Funcion para /owner/:ownerId/cars/:carId
+// TODO: Comprobar si se modifican datos que deban actualizarse en cascada
+exports.updateCarByOwnerId = async (req, res) => {
+  try {
+    const carId = req.params.carId;
+    const ownerId = req.params.ownerId;
+
+    const data = req.body;
+
+    if (!ownerId || !carId) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Propietario o coche no encontrados",
+      });
+    }
+
+    const cars = await Car.findOneAndUpdate(
+      { propietario: ownerId, _id: carId },
+      data,
+      { new: true, runValidators: true }
+    );
+
+    if (!cars) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No se ha podido actualizar los datos del coche",
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        car: cars  
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo actualizar los datos del coche",
+    });
+  }
+};
+
+// Funcion para /owner/:ownerId/cars/:carId
+// TODO: Borrado en cascada para las colecciones con referencias
+exports.deleteCarByOwnerId = async (req, res) => {
+  try {
+    const carId = req.params.carId;
+    const ownerId = req.params.ownerId;
+
+    if (!ownerId || !carId) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Propietario o coche no encontrados",
+      });
+    }
+
+    const cars = await Car.findOneAndDelete({
+      propietario: ownerId,
+      _id: carId,
+    });
+
+    if (!cars) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No se ha podido borrar el coche",
+      });
+    }
+
+    return res.status(204).json({
+      status: "success",
+      data: null,
+    });
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: "fail",
+      message: "No se pudo borrar los datos del coche",
     });
   }
 };

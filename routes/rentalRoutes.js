@@ -14,6 +14,7 @@ const {
   createRentalByClientId,
   updateRentalByClientId,
   deleteRentalByClientId,
+  deleteRentalsByClientId,
   createRentalByCarId,
   updateRentalByCarId,
   deleteRentalByCarId,
@@ -21,8 +22,6 @@ const {
 } = require("../controllers/rentalController");
 
 const router = express.Router();
-
-// TODO: Actualizar updateRental y deleteRental para que soporten los 3 campos de ID
 
 router.route("/").get(getAllRentals).post(createRental);
 router.route("/:rentalId").get(getRentalById);
@@ -37,7 +36,8 @@ router
 router
   .route("/client/:clientId")
   .get(getRentalsByClientId)
-  .post(createRentalByClientId);
+  .post(createRentalByClientId)
+  .delete(deleteRentalsByClientId)
 router
   .route("/client/:clientId/:rentalId")
   .patch(updateRentalByClientId)
