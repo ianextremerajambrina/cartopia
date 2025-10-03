@@ -3,6 +3,7 @@ const {
   getAllCars,
   getCarById,
   createCar,
+  getCarByOwnerId,
   getCarsByOwnerId,
   createCarByOwnerId,
   updateCarByOwnerId,
@@ -21,6 +22,6 @@ const router = express.Router();
 
 router.route('/').get(getAllCars).post(createCar);
 router.route('/:carId').get(/*protect,restrictTo(['Manager','Staff']),*/getCarById).patch(updateCar).delete(deleteCar);
-router.route('/owner/:ownerId/cars').get(getCarsByOwnerId).post(createCarByOwnerId);
-router.route('/owner/:ownerId/cars/:carId').patch(updateCarByOwnerId).delete(deleteCarByOwnerId)
+router.route('/owner/:ownerId').get(getCarsByOwnerId).post(createCarByOwnerId);
+router.route('/owner/:ownerId/:carId').get(getCarByOwnerId).patch(updateCarByOwnerId).delete(deleteCarByOwnerId)
 module.exports = router;

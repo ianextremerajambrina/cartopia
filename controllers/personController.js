@@ -175,14 +175,29 @@ exports.createPersonByStoreId = async (req, res) => {
 // TODO: Verificar que el rol no sea staff o manager. En caso contrario indicar error, y crear empleados en store
 exports.createPerson = async (req, res) => {
   try {
-    const newPerson = await Person.create(req.body);
 
-    if (req.body.rol !== "Cliente") {
+    //TODO: Escribir un objeto manual con los campos que debe tener
+
+    const personData = {
+      ubicacion: req.body.ubicacion,
+      name: req.body.name,
+      identificacion: req.body.identificacion,
+      email: req.body.email,
+      telefono: req.body.telefono,
+      tienda: req.body.tienda,
+      coches: req.body.coches,
+      password: req.body.password,
+      rol: req.body.rol
+    }
+
+    if (personData.rol !== "Cliente") {
       return res.status(400).json({
         status: "fail",
         message: "Este endpoint es solo para crear usuarios clientes",
       });
     }
+  
+    const newPerson = await Person.create(req.body);
 
     res.status(201).json({
       status: "success",

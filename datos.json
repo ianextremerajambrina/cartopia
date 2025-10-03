@@ -284,5 +284,211 @@
       "vehiculo": "car3",
       "tienda": "store2"
     }
-  ]
+  ],
+  "testData": {
+    "auth": {
+      "register": {
+        "name": "Nuevo Usuario",
+        "identificacion": "99999999Z",
+        "email": "nuevo@example.com",
+        "password": "password123",
+        "telefono": "600000000",
+        "ubicacion": {
+          "pais": "España",
+          "direccion": "Calle Nueva 1",
+          "codigoPostal": "28002",
+          "municipio": "Madrid",
+          "comunidadAutonoma": "Madrid"
+        },
+        "rol": "Cliente"
+      },
+      "login": {
+        "email": "juan@example.com",
+        "password": "password123"
+      }
+    },
+    "stores": {
+      "create": {
+        "nombreTienda": "Nueva Tienda",
+        "ubicacion": {
+          "pais": "España",
+          "direccion": "Calle Nueva Tienda 5",
+          "codigoPostal": "28003",
+          "municipio": "Madrid",
+          "comunidadAutonoma": "Madrid"
+        }
+      },
+      "update": {
+        "nombreTienda": "Tienda Actualizada"
+      }
+    },
+    "persons": {
+      "create": {
+        "name": "Cliente Nuevo",
+        "identificacion": "88888888Y",
+        "email": "cliente@example.com",
+        "password": "password123",
+        "telefono": "600111111",
+        "ubicacion": {
+          "pais": "España",
+          "direccion": "Calle Cliente 2",
+          "codigoPostal": "28004",
+          "municipio": "Madrid",
+          "comunidadAutonoma": "Madrid"
+        },
+        "rol": "Cliente"
+      },
+      "createByStore": {
+        "name": "Empleado Nuevo",
+        "identificacion": "77777777X",
+        "email": "empleado@example.com",
+        "password": "password123",
+        "telefono": "600222222",
+        "ubicacion": {
+          "pais": "España",
+          "direccion": "Calle Empleado 3",
+          "codigoPostal": "28005",
+          "municipio": "Madrid",
+          "comunidadAutonoma": "Madrid"
+        },
+        "rol": "Staff"
+      },
+      "update": {
+        "telefono": "600333333"
+      }
+    },
+    "cars": {
+      "create": {
+        "marca": "Nissan",
+        "modelo": "Qashqai",
+        "potencia": 140,
+        "fechaFabricacion": "2022-01-01",
+        "fechaCompra": "2022-06-01",
+        "precios": {
+          "compra": 25000,
+          "alquiler": 60
+        }
+      },
+      "createInStore": {
+        "marca": "Volkswagen",
+        "modelo": "Golf",
+        "potencia": 125,
+        "fechaFabricacion": "2021-05-01",
+        "fechaCompra": "2021-10-01",
+        "precios": {
+          "compra": 19000,
+          "alquiler": 50
+        }
+      },
+      "createByPerson": {
+        "marca": "Mercedes",
+        "modelo": "C-Class",
+        "potencia": 180,
+        "fechaFabricacion": "2020-03-01",
+        "fechaCompra": "2020-08-01",
+        "precios": {
+          "compra": 35000,
+          "alquiler": 90
+        }
+      },
+      "update": {
+        "estado": "mantenimiento"
+      }
+    },
+    "rentals": {
+      "create": {
+        "tienda": "store1",
+        "cliente": "person1",
+        "vehiculo": "car1",
+        "fechaInicio": "2024-10-01",
+        "fechaFin": "2024-10-05",
+        "precioTotal": 250
+      },
+      "createByStore": {
+        "cliente": "person1",
+        "vehiculo": "car1",
+        "fechaInicio": "2024-10-06",
+        "fechaFin": "2024-10-08",
+        "precioTotal": 100
+      },
+      "createByClient": {
+        "tienda": "store1",
+        "vehiculo": "car1",
+        "fechaInicio": "2024-10-09",
+        "fechaFin": "2024-10-11",
+        "precioTotal": 120
+      },
+      "createByCar": {
+        "tienda": "store1",
+        "cliente": "person1",
+        "fechaInicio": "2024-10-12",
+        "fechaFin": "2024-10-14",
+        "precioTotal": 140
+      },
+      "update": {
+        "estado": "devuelto"
+      }
+    },
+    "payments": {
+      "create": {
+        "cliente": "person1",
+        "tipoPago": "alquiler",
+        "precio": 250,
+        "transaccionTipo": "Transaction",
+        "transaccionRef": "transaction1"
+      },
+      "update": {
+        "precio": 260
+      }
+    },
+    "reviews": {
+      "create": {
+        "cliente": "person1",
+        "valoracion": 5,
+        "coche": "car1",
+        "descripcion": "Fantástico coche, lo recomiendo.",
+        "tienda": "store1"
+      },
+      "createByCar": {
+        "cliente": "person1",
+        "valoracion": 4,
+        "descripcion": "Muy buen coche.",
+        "tienda": "store1"
+      },
+      "createByClient": {
+        "valoracion": 3,
+        "coche": "car1",
+        "descripcion": "Aceptable.",
+        "tienda": "store1"
+      },
+      "update": {
+        "valoracion": 4,
+        "descripcion": "Mejor de lo que pensaba."
+      }
+    },
+    "services": {
+      "create": {
+        "tipoServicio": "mantenimiento",
+        "tecnico": "person3",
+        "precio": 150,
+        "vehiculo": "car1",
+        "tienda": "store1"
+      },
+      "createByStore": {
+        "tipoServicio": "reparacion",
+        "tecnico": "person3",
+        "precio": 300,
+        "vehiculo": "car1"
+      },
+      "createByCar": {
+        "tipoServicio": "mantenimiento",
+        "tecnico": "person3",
+        "precio": 100,
+        "tienda": "store1"
+      },
+      "update": {
+        "precio": 160
+      }
+    }
+  }
 }

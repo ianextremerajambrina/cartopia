@@ -233,11 +233,12 @@ exports.createReviewByClientId = async (req, res) => {
 
 exports.getReviewsByStoreId = async (req, res) => {
   try {
+    console.log(req.params);
     const storeId = req.params.storeId;
 
-    const reviews = await Review.find({ tienda: storeId });
+    const reviews = await Review.find({ tienda: storeId});
 
-    if (!reviews || reviews.length === 0) {
+    if (reviews.length === 0) {
       return res.status(404).json({
         status: "fail",
         message: "No se han encontrado reseñas para el valor especificado",

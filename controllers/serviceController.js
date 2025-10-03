@@ -113,11 +113,12 @@ exports.deleteService = async (req, res) => {
 // Funcion para /:storeId
 exports.getServicesByStoreId = async (req, res) => {
   try {
+
     const storeId = req.params.storeId;
 
     const services = await Service.find({ tienda: storeId });
 
-    if (!services || services.length === 0) {
+    if (services.length === 0) {
       return res.status(404).json({
         status: "fail",
         message: "No se han encontrado servicios para esta tienda",

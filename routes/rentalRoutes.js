@@ -24,13 +24,13 @@ const {
 const router = express.Router();
 
 router.route("/").get(getAllRentals).post(createRental);
-router.route("/:rentalId").get(getRentalById);
+router.route("/:rentalId").get(getRentalById);// Falta patch y delete
 router
   .route("/store/:storeId")
   .get(getRentalsByStoreId)
   .post(createRentalByStoreId);
 router
-  .route("/store/:storeId/:rentalId")
+  .route("/store/:storeId/:rentalId") // falta get aquí
   .patch(updateRentalByStoreId)
   .delete(deleteRentalByStoreId);
 router
@@ -39,12 +39,12 @@ router
   .post(createRentalByClientId)
   .delete(deleteRentalsByClientId)
 router
-  .route("/client/:clientId/:rentalId")
+  .route("/client/:clientId/:rentalId") // falta get aquí
   .patch(updateRentalByClientId)
   .delete(deleteRentalByClientId);
 router.route("/cars/:carId").get(getRentalsByCarId).post(createRentalByCarId);
 router
-  .route("/cars/:carId/:rentalId")
+  .route("/cars/:carId/:rentalId") // falta get aquí
   .patch(updateRentalByCarId)
   .delete(deleteRentalByCarId);
 router.route("/:rentalId/return").patch(returnCarByRentalId);

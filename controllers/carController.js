@@ -66,6 +66,7 @@ exports.createCar = async (req, res) => {
       ...req.body,
       propietarioTipo: "Person", // asumimos person si se crea en /cars
     };
+    
     const newCar = await Car.create(carData);
 
     if (!newCar) {
@@ -89,6 +90,37 @@ exports.createCar = async (req, res) => {
     });
   }
 };
+
+exports.getCarByOwnerId = async (req, res) => {
+  try {
+
+    const ownerId = req.params.ownerId;
+    const carId = req.params.carId;
+
+    const car = await Car.findOne({_id: carId, propietario: ownerId});
+
+    if (!car) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No se encontro el coche del propietario especificado'  
+      })
+    }
+
+    res.status(200).json({
+      message: 'success',
+      data: {
+        car
+      }
+    })
+
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      status: 'fail',
+      message: 'No se pudo obtener el coche del propietario'
+    })
+  }
+}
 
 // Endpoint: GET /api/v1/cars/owner/:ownerId/cars
 // Funcion para '/owner/:ownerId'
